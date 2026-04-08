@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JITU Admin - Control Panel</title>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-active {
+            border-color: #FFCA40;
+            color: #18181b;
+        }
+    </style>
+</head>
+
+<body class="bg-[#F4F7FE] text-zinc-800 font-sans min-h-screen p-4 md:p-10">
+
+    <div class="max-w-4xl mx-auto space-y-8">
+        <!-- Header -->
+        <header class="flex items-center justify-between mb-6">
+            <div>
+                <h1 class="text-3xl font-bold tracking-tight text-zinc-900">Admin Control Panel</h1>
+                <p class="text-zinc-500 mt-1">Sistem Aktivasi & Management UMKM JITU</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="/admin/logout"
+                    class="text-xs text-zinc-500 hover:text-red-500 font-medium transition-colors cursor-pointer">
+                    Logout →
+                </a>
+                <div
+                    class="w-12 h-12 bg-[#FFCA40] rounded-2xl flex items-center justify-center shadow-lg transform rotate-12">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="zinc-800" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                </div>
+            </div>
+        </header>
+
+        <!-- Auth Section -->
+        <section class="glass rounded-3xl p-8 shadow-xl border border-white">
+            <h2 class="text-sm font-bold uppercase tracking-widest text-zinc-400 mb-4">ADMIN OTORISASI</h2>
+            <div class="flex flex-col md:flex-row gap-4">
+                <input type="password" id="adminSecret" placeholder="Masukkan Admin Secret Key"
+                    class="flex-1 bg-white border border-zinc-200 rounded-2xl py-4 px-6 outline-none focus:ring-2 focus:ring-[#FFCA40] transition-all">
+                <button onclick="saveSecret()"
+                    class="bg-zinc-900 text-white font-bold py-4 px-10 rounded-2xl hover:bg-zinc-700 transition-all cursor-pointer">
+                    Simpan Key
+                </button>
+            </div>
+            <p id="secretStatus" class="text-xs text-emerald-600 mt-3 hidden">✅ Secret Key tersimpan di browser</p>
+        </section>
+
+        <!-- Navigation Tabs -->
+        <nav class="flex gap-4 md:gap-8 border-b border-zinc-200 px-2 overflow-x-auto whitespace-nowrap scrollbar-hide">
+            <button onclick="switchTab('activation')" id="tab-activation"
+                class="pb-4 text-sm font-bold transition-all border-b-2 border-transparent tab-active cursor-pointer">
+                MANAJEMEN DEVICE
+            </button>
+            <button onclick="switchTab('payments')" id="tab-payments"
+                class="pb-4 text-sm font-bold text-zinc-400 transition-all border-b-2 border-transparent hover:text-zinc-600 cursor-pointer">
+                ANTREAN PEMBELIAN
+            </button>
+            <button onclick="switchTab('users')" id="tab-users"
+                class="pb-4 text-sm font-bold text-zinc-400 transition-all border-b-2 border-transparent hover:text-zinc-600 cursor-pointer">
+                LIST USER
+            </button>
+        </nav>
+
+        <!-- Activation Tab Content -->
+        <div id="content-activation" class="space-y-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Search User -->
+                <section class="glass rounded-3xl p-8 shadow-xl border border-white space-y-6">
+                    <h2 class="text-sm font-bold uppercase tracking-widest text-zinc-400">CARI USER</h2>
+                    <div class="space-y-4">
+                        <input type="text" id="phoneSearch" placeholder="Ketik No WA atau Kode Lisensi Grup"
+                            class="w-full bg-white border border-zinc-200 rounded-2xl py-4 px-6 outline-none focus:ring-2 focus:ring-[#FFCA40]">
+                        <button onclick="searchUser()"
+                            class="w-full bg-[#FFCA40] text-zinc-900 font-bold py-4 rounded-2xl hover:shadow-lg transition-all cursor-pointer">
+                            Cek Status & Device
+                        </button>
+                    </div>
+
+                    <div id="userInfo" class="hidden space-y-4 pt-4 border-t border-zinc-100">
+                        <div>
+                            <p class="text-[10px] text-zinc-400 uppercase font-bold tracking-wider">Nama User</p>
+                            <p id="userName" class="text-lg font-bold text-zinc-900">-</p>
+                        </div>
+                        <div class="flex justify-between">
+                            <div>
+                                <p class="text-[10px] text-zinc-400 uppercase font-bold tracking-wider">Status Kode</p>
+                                <span id="userCodeStatus"
+                                    class="inline-block mt-1 px-3 py-1 bg-zinc-100 rounded-full text-[10px] font-bold">-</span>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-zinc-400 uppercase font-bold tracking-wider">Device Aktif</p>
+                                <span id="userDeviceCount" class="text-lg font-bold">0 / 2</span>
+                            </div>
+                        </div>
+                        <!-- Masa Aktif Info -->
+                        <div id="expiryInfo" class="hidden rounded-2xl p-4 border space-y-2">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-[10px] text-zinc-400 uppercase font-bold tracking-wider">Masa Aktif</p>
+                                    <span id="expiryStatus" class="text-sm font-bold">-</span>
+                                </div>
+                                <button id="extendBtn" onclick="extendFromSearch()" 
+                                    class="bg-[#FFCA40] text-zinc-900 px-4 py-2 rounded-xl font-bold text-[10px] hover:shadow-lg transition-all cursor-pointer">
+                                    + 30 HARI
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Set Activation -->
+                <section class="glass rounded-3xl p-8 shadow-xl border border-white space-y-6">
+                    <h2 class="text-sm font-bold uppercase tracking-widest text-zinc-400">SET KODE AKTIVASI</h2>
+                    <div class="space-y-4">
+                        <input type="text" id="targetPhone" placeholder="Nomor Telepon User"
+                            class="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-4 px-6 outline-none focus:ring-2 focus:ring-[#FFCA40]">
+                        <div class="flex gap-2">
+                            <input type="text" id="newCode" placeholder="Kode Aktivasi Baru"
+                                class="flex-1 bg-zinc-50 border border-zinc-200 rounded-2xl py-4 px-6 outline-none focus:ring-2 focus:ring-[#FFCA40]">
+                            <button onclick="genRandom()"
+                                class="bg-zinc-100 text-zinc-600 px-4 rounded-2xl font-bold text-xs">RANDOM</button>
+                        </div>
+                        <button onclick="setActivation()"
+                            class="w-full bg-zinc-900 text-white font-bold py-4 rounded-2xl hover:bg-zinc-700 transition-all cursor-pointer shadow-xl">
+                            Simpan Kode Aktivasi
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Devices Table -->
+            <section id="devicesSection" class="glass rounded-3xl p-8 shadow-xl border border-white hidden">
+                <h2 class="text-sm font-bold uppercase tracking-widest text-zinc-400 mb-6">DEVICE YANG TERDAFTAR</h2>
+                <div class="overflow-x-auto pb-4">
+                    <table class="w-full text-left min-w-[600px]">
+                        <thead>
+                            <tr
+                                class="text-[10px] text-zinc-400 uppercase tracking-wider font-bold border-b border-zinc-100">
+                                <th class="pb-4">Device ID</th>
+                                <th class="pb-4">Nama Device</th>
+                                <th class="pb-4">Aktivasi</th>
+                                <th class="pb-4">Terakhir Digunakan</th>
+                                <th class="pb-4 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="deviceTableBody">
+                            <!-- Rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <!-- Payments Tab Content -->
+        <div id="content-payments" class="hidden space-y-12">
+            <!-- Ready to Process Section -->
+            <section class="glass rounded-3xl p-8 shadow-xl border border-white">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-sm font-bold uppercase tracking-widest text-emerald-600">SIAP DIPROSES (LUNAS)</h2>
+                    <button onclick="loadPayments()"
+                        class="text-[10px] font-bold text-zinc-500 hover:text-zinc-900 transition-colors uppercase tracking-widest">Refresh
+                        ↻</button>
+                </div>
+                <div class="overflow-x-auto pb-4">
+                    <table class="w-full text-left min-w-[700px]">
+                        <thead>
+                            <tr
+                                class="text-[10px] text-zinc-400 uppercase tracking-wider font-bold border-b border-zinc-100">
+                                <th class="pb-4">Tgl Lunas</th>
+                                <th class="pb-4">Detail UMKM</th>
+                                <th class="pb-4">WhatsApp</th>
+                                <th class="pb-4">Plan</th>
+                                <th class="pb-4 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paymentTableBody">
+                            <!-- Rows -->
+                            <tr>
+                                <td colspan="5" class="py-10 text-center text-zinc-400 text-sm">Memuat data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Pending Section -->
+            <section class="glass rounded-3xl p-8 shadow-xl border border-white opacity-90">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-sm font-bold uppercase tracking-widest text-zinc-400">MENUNGGU PEMBAYARAN (QRIS
+                        PENDING)</h2>
+                </div>
+                <div class="overflow-x-auto pb-4">
+                    <table class="w-full text-left min-w-[600px]">
+                        <thead>
+                            <tr
+                                class="text-[10px] text-zinc-400 uppercase tracking-wider font-bold border-b border-zinc-100">
+                                <th class="pb-4">Tgl Order</th>
+                                <th class="pb-4">UMKM / Pemilik</th>
+                                <th class="pb-4">WhatsApp</th>
+                                <th class="pb-4">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pendingTableBody">
+                            <!-- Rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <!-- Registered Users Tab Content -->
+        <div id="content-users" class="hidden space-y-8">
+            <section class="glass rounded-3xl p-8 shadow-xl border border-white">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-sm font-bold uppercase tracking-widest text-zinc-400">USER YANG TELAH TERDAFTAR</h2>
+                <div class="flex gap-4 items-center">
+                    <button onclick="openUserModal()"
+                        class="bg-zinc-900 text-[#FFCA40] px-4 py-2 rounded-xl font-bold text-[10px] hover:shadow-lg transition-all cursor-pointer uppercase tracking-widest">
+                        + Tambah User
+                    </button>
+                    <button onclick="loadUsers()"
+                        class="text-[10px] font-bold text-zinc-500 hover:text-zinc-900 transition-colors uppercase tracking-widest">Refresh
+                        ↻</button>
+                </div>
+                </div>
+                <div class="overflow-x-auto pb-4">
+                    <table class="w-full text-left min-w-[900px]">
+                        <thead>
+                            <tr
+                                class="text-[10px] text-zinc-400 uppercase tracking-wider font-bold border-b border-zinc-100">
+                                <th class="pb-4">Nama Lengkap</th>
+                                <th class="pb-4">WhatsApp</th>
+                                <th class="pb-4">Kode Lisensi</th>
+                                <th class="pb-4">Masa Aktif</th>
+                                <th class="pb-4 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                            <!-- Rows -->
+                            <tr>
+                                <td colspan="5" class="py-10 text-center text-zinc-400 text-sm">Memuat data user...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <!-- Add/Edit User Modal -->
+        <div id="userModal"
+            class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center hidden z-50 p-4">
+            <div class="bg-white rounded-[32px] p-8 max-w-lg w-full shadow-2xl space-y-6 transform scale-95 opacity-0 transition-all duration-300"
+                id="userBox">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 id="userModalTitle" class="text-2xl font-bold text-zinc-900">Tambah User Baru</h3>
+                    <button onclick="closeUserModal()" class="text-zinc-400 hover:text-zinc-600 transition-colors cursor-pointer">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <form id="userForm" class="space-y-4 text-left overflow-y-auto max-h-[70vh] pr-2 scrollbar-hide">
+                    <input type="hidden" id="editUserId">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest pl-1">Nama Lengkap</label>
+                            <input type="text" id="userFullName" required class="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-3 px-4 outline-none focus:ring-2 focus:ring-[#FFCA40]">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest pl-1">WhatsApp (08xxx)</label>
+                            <input type="text" id="userPhone" required class="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-3 px-4 outline-none focus:ring-2 focus:ring-[#FFCA40]">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest pl-1">Email</label>
+                            <input type="email" id="userEmail" class="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-3 px-4 outline-none focus:ring-2 focus:ring-[#FFCA40]">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest pl-1">Store Name</label>
+                            <input type="text" id="userStore" class="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-3 px-4 outline-none focus:ring-2 focus:ring-[#FFCA40]">
+                        </div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <label id="passLabel" class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest pl-1">Password</label>
+                        <input type="password" id="userPassword" class="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-3 px-4 outline-none focus:ring-2 focus:ring-[#FFCA40]" placeholder="Kosongkan jika tidak ganti">
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest pl-1">Modal Awal (Capital)</label>
+                        <input type="number" id="userCapital" class="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-3 px-4 outline-none focus:ring-2 focus:ring-[#FFCA40]" value="0">
+                    </div>
+                </form>
+
+                <div class="flex gap-3 pt-4 border-t border-zinc-100">
+                    <button onclick="closeUserModal()"
+                        class="flex-1 bg-zinc-100 text-zinc-600 font-bold py-4 rounded-2xl hover:bg-zinc-200 transition-all cursor-pointer">
+                        Batal
+                    </button>
+                    <button onclick="saveUser()"
+                        class="flex-1 bg-zinc-900 text-[#FFCA40] font-bold py-4 rounded-2xl hover:bg-zinc-700 transition-all cursor-pointer shadow-xl">
+                        Simpan Perubahan
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Modal (Success Processing) -->
+        <div id="processingModal"
+            class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center hidden z-50 p-4">
+            <div class="bg-white rounded-[32px] p-8 max-w-sm w-full shadow-2xl space-y-6 text-center">
+                <div
+                    class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full mx-auto flex items-center justify-center">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-zinc-900">UMKM Berhasil Diproses!</h3>
+                    <p class="text-sm text-zinc-500 mt-2">Akun telah dibuat dan kode aktivasi di-set.</p>
+                </div>
+                <div class="bg-zinc-50 rounded-2xl p-6 space-y-1 border border-zinc-100">
+                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Kode Aktivasi</p>
+                    <p id="processedCode" class="text-4xl font-black text-zinc-900 tracking-tighter">------</p>
+                </div>
+                <div class="text-left bg-zinc-50 rounded-2xl p-4 space-y-2 text-xs">
+                    <p><strong>Email:</strong> <span id="processedEmail"></span></p>
+                    <p><strong>Password:</strong> <span class="bg-zinc-200 px-1 rounded">jitu1234</span></p>
+                </div>
+                <button onclick="closeModal()"
+                    class="w-full bg-zinc-900 text-white font-bold py-4 rounded-2xl hover:bg-zinc-700 transition-all cursor-pointer">
+                    Selesai
+                </button>
+            </div>
+        </div>
+
+        <!-- Custom Alert Modal -->
+        <div id="alertModal"
+            class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center hidden z-[100] p-4">
+            <div class="bg-white rounded-[32px] p-8 max-w-sm w-full shadow-2xl space-y-6 text-center transform scale-95 opacity-0 transition-all duration-300"
+                id="alertBox">
+                <div id="alertIcon" class="w-16 h-16 rounded-full mx-auto flex items-center justify-center">
+                    <!-- Icon inject based on type -->
+                </div>
+                <div>
+                    <h3 id="alertTitle" class="text-xl font-bold text-zinc-900">Judul</h3>
+                    <p id="alertMsg" class="text-sm text-zinc-500 mt-2 line-clamp-3">Pesan akan muncul di sini.</p>
+                </div>
+                <button onclick="closeAlert()"
+                    class="w-full bg-zinc-900 text-white font-bold py-4 rounded-2xl hover:bg-zinc-700 transition-all cursor-pointer">
+                    Mengerti
+                </button>
+            </div>
+        </div>
+
+        <!-- Custom Confirm Modal -->
+        <div id="confirmModal"
+            class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center hidden z-[100] p-4">
+            <div class="bg-white rounded-[32px] p-8 max-w-sm w-full shadow-2xl space-y-6 text-center transform scale-95 opacity-0 transition-all duration-300"
+                id="confirmBox">
+                <div
+                    class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full mx-auto flex items-center justify-center">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 id="confirmTitle" class="text-xl font-bold text-zinc-900">Konfirmasi</h3>
+                    <p id="confirmMsg" class="text-sm text-zinc-500 mt-2">Apakah Anda yakin ingin melakukan tindakan
+                        ini?</p>
+                </div>
+                <div class="flex gap-3">
+                    <button id="confirmCancel"
+                        class="flex-1 bg-zinc-100 text-zinc-600 font-bold py-4 rounded-2xl hover:bg-zinc-200 transition-all cursor-pointer">
+                        Batal
+                    </button>
+                    <button id="confirmOk"
+                        class="flex-1 bg-red-500 text-white font-bold py-4 rounded-2xl hover:bg-red-600 transition-all cursor-pointer shadow-lg shadow-red-200">
+                        Yakin
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="mainStatus"
+            class="fixed bottom-10 right-10 max-w-sm w-full p-4 rounded-2xl shadow-2xl translate-y-20 transition-all opacity-0 pointer-events-none z-50">
+            -
+        </div>
+    </div>
+
+    <script>
+        const API = 'http://localhost:5000/api';
+
+        // --- Custom Modal System ---
+        function showAlert(title, msg, type = 'info') {
+            const modal = document.getElementById('alertModal');
+            const box = document.getElementById('alertBox');
+            const icon = document.getElementById('alertIcon');
+
+            document.getElementById('alertTitle').innerText = title;
+            document.getElementById('alertMsg').innerText = msg;
+
+            if (type === 'error') {
+                icon.className = "w-16 h-16 bg-red-100 text-red-600 rounded-full mx-auto flex items-center justify-center";
+                icon.innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+            } else {
+                icon.className = "w-16 h-16 bg-[#FFCA40]/20 text-zinc-900 rounded-full mx-auto flex items-center justify-center";
+                icon.innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+            }
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                box.classList.remove('scale-95', 'opacity-0');
+                box.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeAlert() {
+            const modal = document.getElementById('alertModal');
+            const box = document.getElementById('alertBox');
+            box.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        function showConfirm(title, msg) {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('confirmModal');
+                const box = document.getElementById('confirmBox');
+                const okBtn = document.getElementById('confirmOk');
+                const cancelBtn = document.getElementById('confirmCancel');
+
+                document.getElementById('confirmTitle').innerText = title;
+                document.getElementById('confirmMsg').innerText = msg;
+
+                const cleanup = (val) => {
+                    box.classList.add('scale-95', 'opacity-0');
+                    setTimeout(() => modal.classList.add('hidden'), 300);
+                    resolve(val);
+                };
+
+                okBtn.onclick = () => cleanup(true);
+                cancelBtn.onclick = () => cleanup(false);
+
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    box.classList.remove('scale-95', 'opacity-0');
+                    box.classList.add('scale-100', 'opacity-100');
+                }, 10);
+            });
+        }
+
+        function showStatus(msg, err = false) {
+            const el = document.getElementById('mainStatus');
+            el.innerText = msg;
+            el.className = `fixed bottom-10 right-10 max-w-sm w-full p-4 rounded-2xl shadow-2xl transition-all ${err ? 'bg-red-500 text-white' : 'bg-emerald-500 text-white'}`;
+            el.classList.remove('opacity-0', 'translate-y-20');
+            el.classList.add('opacity-100', 'translate-y-0');
+            setTimeout(() => {
+                el.classList.add('opacity-0', 'translate-y-20');
+                el.classList.remove('opacity-100', 'translate-y-0');
+            }, 3000);
+        }
+
+        function switchTab(tab) {
+            // Hide all contents
+            document.getElementById('content-activation').classList.add('hidden');
+            document.getElementById('content-payments').classList.add('hidden');
+            document.getElementById('content-users').classList.add('hidden');
+
+            // Inactive all tabs
+            const tabs = ['activation', 'payments', 'users'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                btn.classList.remove('tab-active', 'text-zinc-900');
+                btn.classList.add('text-zinc-400');
+            });
+
+            // Activate current
+            document.getElementById(`content-${tab}`).classList.remove('hidden');
+            document.getElementById(`tab-${tab}`).classList.add('tab-active', 'text-zinc-900');
+            document.getElementById(`tab-${tab}`).classList.remove('text-zinc-400');
+
+            if (tab === 'payments') loadPayments();
+            if (tab === 'users') loadUsers();
+        }
+
+        async function api(path, method = 'GET', body = null) {
+            const secret = localStorage.getItem('jitu_admin_secret');
+            if (!secret) throw new Error('Simpan Admin Secret Key terlebih dahulu');
+
+            const options = {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-admin-secret': secret
+                }
+            };
+            if (body) options.body = JSON.stringify(body);
+
+            const res = await fetch(`${API}${path}`, options);
+            const data = await res.json();
+            if (!data.success) throw new Error(data.message || 'API Error');
+            return data;
+        }
+
+        // Track phone for extend from search
+        let currentSearchPhone = null;
+
+        // Activation Logic
+        async function searchUser(searchParam = null) {
+            const searchStr = searchParam || document.getElementById('phoneSearch').value;
+            if (!searchStr) return showAlert('Validasi', 'Masukkan nomor telepon atau kode lisensi terlebih dahulu.');
+            
+            // Jika pencarian dipicu dari Set Activation, sinkronkan input cari
+            if (searchParam) document.getElementById('phoneSearch').value = searchParam;
+            currentSearchPhone = searchStr;
+
+            try {
+                const data = await api('/admin/user-details', 'POST', { searchStr });
+                document.getElementById('userInfo').classList.remove('hidden');
+                document.getElementById('userName').innerText = data.user.full_name;
+                document.getElementById('userCodeStatus').innerText = data.user.has_activation ? 'AKTIF' : 'BELUM SET';
+                document.getElementById('userCodeStatus').className = `inline-block mt-1 px-3 py-1 rounded-full text-[10px] font-bold ${data.user.has_activation ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`;
+                
+                const deviceCountText = `${data.devices.length} / 2`;
+                const deviceCountEl = document.getElementById('userDeviceCount');
+                deviceCountEl.innerText = deviceCountText;
+                if (data.devices.length >= 2) {
+                    deviceCountEl.className = 'text-lg font-bold text-red-500';
+                } else {
+                    deviceCountEl.className = 'text-lg font-bold text-zinc-900';
+                }
+
+                document.getElementById('targetPhone').value = data.user.phone;
+                renderDevices(data.devices);
+
+                // Show expiry info
+                const expiryDiv = document.getElementById('expiryInfo');
+                const expiryStatus = document.getElementById('expiryStatus');
+                expiryDiv.classList.remove('hidden');
+
+                if (!data.user.activation_set_at) {
+                    expiryDiv.className = 'rounded-2xl p-4 border border-zinc-200 bg-zinc-50 space-y-2';
+                    expiryStatus.innerHTML = '<span class="text-zinc-500">Belum pernah diaktifkan</span>';
+                } else if (data.user.is_expired) {
+                    expiryDiv.className = 'rounded-2xl p-4 border border-red-200 bg-red-50 space-y-2';
+                    expiryStatus.innerHTML = '<span class="text-red-600">⚠ KADALUARSA</span> <span class="text-[10px] text-red-400 block">sejak ' + new Date(data.user.expires_at).toLocaleDateString() + '</span>';
+                } else {
+                    const exp = new Date(data.user.expires_at);
+                    const daysLeft = Math.ceil((exp - new Date()) / (1000 * 60 * 60 * 24));
+                    const color = daysLeft <= 7 ? 'amber' : 'emerald';
+                    expiryDiv.className = `rounded-2xl p-4 border border-${color}-200 bg-${color}-50 space-y-2`;
+                    expiryStatus.innerHTML = `<span class="text-${color}-700">${daysLeft} hari tersisa</span> <span class="text-[10px] text-${color}-500 block">aktif hingga ${exp.toLocaleDateString()}</span>`;
+                }
+            } catch (err) {
+                showAlert('Gagal', err.message, 'error');
+                document.getElementById('userInfo').classList.add('hidden');
+                document.getElementById('devicesSection').classList.add('hidden');
+                document.getElementById('expiryInfo').classList.add('hidden');
+            }
+        }
+
+        // Extend activation from search panel
+        async function extendFromSearch() {
+            if (!currentSearchPhone) return;
+            await extendActivation(currentSearchPhone);
+            searchUser(currentSearchPhone);
+        }
+
+        // Extend activation (reusable)
+        async function extendActivation(phone, days = 30) {
+            const confirmed = await showConfirm('Perpanjang Masa Aktif', `Perpanjang masa aktif user ini sebanyak ${days} hari?`);
+            if (!confirmed) return;
+            try {
+                const data = await api('/admin/extend-activation', 'POST', { phone, days });
+                showStatus(data.message);
+                // Refresh list jika di tab users
+                if (!document.getElementById('content-users').classList.contains('hidden')) {
+                    loadUsers();
+                }
+            } catch (err) {
+                showAlert('Gagal Perpanjang', err.message, 'error');
+            }
+        }
+
+        function renderDevices(devices) {
+            const section = document.getElementById('devicesSection');
+            const tbody = document.getElementById('deviceTableBody');
+            tbody.innerHTML = '';
+            if (devices.length === 0) { section.classList.add('hidden'); return; }
+            section.classList.remove('hidden');
+            devices.forEach(d => {
+                tbody.innerHTML += `
+                    <tr class="border-b border-zinc-50 text-xs">
+                        <td class="py-4 font-mono text-zinc-400">${d.device_id.slice(0, 10)}...</td>
+                        <td class="py-4 font-bold">${d.device_name || '-'}</td>
+                        <td class="py-4 text-zinc-500">${new Date(d.activated_at).toLocaleString()}</td>
+                        <td class="py-4 text-zinc-500">${new Date(d.last_used_at).toLocaleString()}</td>
+                        <td class="py-4 text-right">
+                            <button onclick="deleteDevice(${d.id})" class="bg-red-50 text-red-500 hover:bg-red-100 px-3 py-1.5 rounded-lg font-bold text-[10px] transition-all cursor-pointer">HAPUS</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        async function deleteDevice(id) {
+            const confirmed = await showConfirm('Konfirmasi Hapus', 'Apa Anda yakin ingin menghapus device ini? User harus aktivasi ulang jika ingin menggunakan device ini lagi.');
+            if (!confirmed) return;
+            try {
+                await api(`/admin/devices/${id}`, 'DELETE');
+                showStatus('Device dihapus');
+                searchUser();
+            } catch (err) { showAlert('Error', err.message, 'error'); }
+        }
+
+        function genRandom() { document.getElementById('newCode').value = Math.floor(100000 + Math.random() * 900000); }
+
+        async function setActivation() {
+            const phone = document.getElementById('targetPhone').value;
+            const code = document.getElementById('newCode').value;
+            if (!phone || !code) return showAlert('Input Kosong', 'Nomor telepon dan kode aktivasi wajib diisi.');
+            try {
+                await api('/admin/set-activation', 'POST', { phone, activation_code: code });
+                showStatus('Kode Aktivasi disimpan!');
+                searchUser(phone);
+            } catch (err) { showAlert('Gagal Simpan', err.message, 'error'); }
+        }
+
+        // List Users Logic
+        async function loadUsers() {
+            const tbody = document.getElementById('userTableBody');
+            try {
+                const data = await api('/admin/users');
+                tbody.innerHTML = '';
+                if (data.users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="py-10 text-center text-zinc-400 text-sm">Belum ada user yang terdaftar.</td></tr>';
+                    return;
+                }
+                data.users.forEach(u => {
+                    let statusBadge;
+                    if (!u.activation_set_at) {
+                        statusBadge = '<span class="px-2 py-0.5 bg-zinc-100 text-zinc-500 rounded-full text-[10px] font-bold">BELUM SET</span>';
+                    } else if (u.is_expired) {
+                        statusBadge = '<span class="px-2 py-0.5 bg-red-100 text-red-600 rounded-full text-[10px] font-bold">KADALUARSA</span>';
+                    } else {
+                        const exp = new Date(u.expires_at);
+                        const now = new Date();
+                        const daysLeft = Math.ceil((exp - now) / (1000 * 60 * 60 * 24));
+                        statusBadge = `<span class="px-2 py-0.5 ${daysLeft <= 7 ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'} rounded-full text-[10px] font-bold">${daysLeft} HARI LAGI</span>`;
+                    }
+
+                    tbody.innerHTML += `
+                        <tr class="border-b border-zinc-50 text-xs hover:bg-zinc-50/50 transition-colors">
+                            <td class="py-4">
+                                <div class="font-bold text-zinc-900">${u.full_name}</div>
+                                <div class="text-[10px] text-zinc-400 font-mono">ID: ${u.consignor_id}</div>
+                            </td>
+                            <td class="py-4 font-medium">
+                                <a href="https://wa.me/${formatWA(u.phone)}" target="_blank" class="text-emerald-600 hover:underline">
+                                    ${u.phone}
+                                </a>
+                            </td>
+                            <td class="py-4 font-mono font-bold text-amber-600 text-sm tracking-widest">${u.activation && u.activation.length <= 10 ? u.activation : '<span class="text-[10px] text-zinc-300">TERENKRIPSI LAMA</span>'}</td>
+                            <td class="py-4">
+                                ${statusBadge}
+                                ${u.expires_at ? '<div class="text-[10px] text-zinc-400 mt-1">s/d ' + new Date(u.expires_at).toLocaleDateString() + '</div>' : ''}
+                            </td>
+                            <td class="py-4 text-right">
+                                <div class="flex gap-2 justify-end">
+                                    <button onclick="extendActivation('${u.phone}')" 
+                                        class="bg-[#FFCA40] text-zinc-900 px-3 py-1.5 rounded-lg font-bold text-[10px] hover:shadow-lg transition-all cursor-pointer">
+                                        + 30 HARI
+                                    </button>
+                                    <button onclick="openUserModal(${u.consignor_id})" 
+                                        class="bg-zinc-100 text-zinc-600 px-3 py-1.5 rounded-lg font-bold text-[10px] hover:bg-zinc-200 transition-all cursor-pointer">
+                                        EDIT
+                                    </button>
+                                    <button onclick="deleteUser(${u.consignor_id})" 
+                                        class="bg-red-50 text-red-500 hover:bg-red-100 px-3 py-1.5 rounded-lg font-bold text-[10px] transition-all cursor-pointer">
+                                        HAPUS
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                showAlert('Eror Load User', err.message, 'error');
+            }
+        }
+
+        // Payment Logic
+        async function loadPayments() {
+            const tbody = document.getElementById('paymentTableBody');
+            const pbody = document.getElementById('pendingTableBody');
+
+            try {
+                const data = await api('/admin/payments');
+                const { ready, pending } = data.payments;
+
+                tbody.innerHTML = '';
+                if (ready.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="py-10 text-center text-zinc-400 text-sm">Tidak ada antrean pembayaran lunas.</td></tr>';
+                } else {
+                    ready.forEach(p => {
+                        tbody.innerHTML += `
+                            <tr class="border-b border-zinc-50 text-xs hover:bg-zinc-50/50 transition-colors">
+                                <td class="py-4 text-zinc-500">${new Date(p.created_at).toLocaleDateString()}</td>
+                                <td class="py-4">
+                                    <div class="font-bold text-zinc-900">${p.umkm}</div>
+                                    <div class="text-[10px] text-zinc-400">${p.full_name}</div>
+                                </td>
+                                <td class="py-4 font-medium">
+                                    <a href="https://wa.me/${formatWA(p.whatsapp)}" target="_blank" class="text-emerald-600 hover:underline">
+                                        ${p.whatsapp}
+                                    </a>
+                                </td>
+                                <td class="py-4">
+                                    <span class="px-2 py-0.5 bg-zinc-100 rounded-full text-[10px] font-bold">PLAN ${p.plan || 1}</span>
+                                </td>
+                                <td class="py-4 text-right">
+                                    <button onclick="processPayment('${p.id_payment}')" class="bg-zinc-900 text-white hover:bg-zinc-700 px-4 py-2 rounded-xl font-bold text-[10px] transition-all cursor-pointer">PROSES UMKM</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                pbody.innerHTML = '';
+                if (pending.length === 0) {
+                    pbody.innerHTML = '<tr><td colspan="4" class="py-6 text-center text-zinc-400 text-sm">Tidak ada pembayaran tertunda.</td></tr>';
+                } else {
+                    pending.forEach(p => {
+                        pbody.innerHTML += `
+                            <tr class="border-b border-zinc-50 text-xs whitespace-nowrap">
+                                <td class="py-4 text-zinc-400">${new Date(p.created_at).toLocaleDateString()}</td>
+                                <td class="py-4 font-medium text-zinc-600">${p.umkm}</td>
+                                <td class="py-4">
+                                    <a href="https://wa.me/${formatWA(p.whatsapp)}" target="_blank" class="text-zinc-500 hover:text-emerald-600 transition-colors">
+                                        ${p.whatsapp}
+                                    </a>
+                                </td>
+                                <td class="py-4 italic text-zinc-400">QRIS PENDING</td>
+                            </tr>
+                        `;
+                    });
+                }
+            } catch (err) {
+                showAlert('Eror Load', err.message, 'error');
+            }
+        }
+
+        function formatWA(num) {
+            return num.replace(/^0/, '62');
+        }
+
+        async function processPayment(id) {
+            const confirmed = await showConfirm('Proses UMKM', 'Sistem akan membuatkan akun dan men-set kode aktivasi untuk UMKM ini. Lanjutkan?');
+            if (!confirmed) return;
+            try {
+                const data = await api('/admin/process-payment', 'POST', { id_payment: id });
+                document.getElementById('processedCode').innerText = data.activation_code;
+                document.getElementById('processedEmail').innerText = data.user.email;
+                document.getElementById('processingModal').classList.remove('hidden');
+                loadPayments();
+            } catch (err) { showAlert('Error', err.message, 'error'); }
+        }
+
+        function closeModal() { document.getElementById('processingModal').classList.add('hidden'); }
+
+        // Secret Section
+        function saveSecret() {
+            const secret = document.getElementById('adminSecret').value;
+            if (!secret) return showAlert('Peringatan', 'Secret Key tidak boleh kosong.');
+            localStorage.setItem('jitu_admin_secret', secret);
+            document.getElementById('secretStatus').classList.remove('hidden');
+            showStatus('Secret Key disimpan');
+        }
+        document.getElementById('adminSecret').value = localStorage.getItem('jitu_admin_secret') || '';
+        if (localStorage.getItem('jitu_admin_secret')) document.getElementById('secretStatus').classList.remove('hidden');
+
+        // --- User CRUD Logic ---
+        function openUserModal(userId = null) {
+            const modal = document.getElementById('userModal');
+            const box = document.getElementById('userBox');
+            const form = document.getElementById('userForm');
+            const title = document.getElementById('userModalTitle');
+            const passLabel = document.getElementById('passLabel');
+
+            form.reset();
+            document.getElementById('editUserId').value = userId || '';
+
+            if (userId) {
+                title.innerText = 'Edit Data User';
+                passLabel.innerText = 'Password Baru (Opsional)';
+                // Fetch user data from table or API
+                const row = document.querySelector(`button[onclick="openUserModal(${userId})"]`).closest('tr');
+                document.getElementById('userFullName').value = row.querySelector('.font-bold').innerText;
+                document.getElementById('userPhone').value = row.querySelector('a').innerText.trim();
+                document.getElementById('userEmail').value = row.cells[2].innerText.trim() === '-' ? '' : row.cells[2].innerText.trim();
+                // Store/Capital can be fetched from API if needed, for now we assume they are simple or fetchable
+                // To be precise, let's just fetch from API to get all hidden fields
+                api(`/admin/user-details`, 'POST', { phone: row.querySelector('a').innerText.trim() })
+                    .then(data => {
+                        document.getElementById('userFullName').value = data.user.full_name;
+                        document.getElementById('userPhone').value = data.user.phone;
+                        document.getElementById('userEmail').value = data.user.email || '';
+                        // Note: current index.ejs doesn't show store_name/capital in user list
+                        // If we want full CRUD we should enable these
+                    });
+            } else {
+                title.innerText = 'Tambah User Baru';
+                passLabel.innerText = 'Password (Wajib)';
+            }
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                box.classList.remove('scale-95', 'opacity-0');
+                box.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeUserModal() {
+            const modal = document.getElementById('userModal');
+            const box = document.getElementById('userBox');
+            box.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        async function saveUser() {
+            const id = document.getElementById('editUserId').value;
+            const full_name = document.getElementById('userFullName').value;
+            const phone = document.getElementById('userPhone').value;
+            const email = document.getElementById('userEmail').value;
+            const password = document.getElementById('userPassword').value;
+            const store_name = document.getElementById('userStore').value;
+            const total_capital = document.getElementById('userCapital').value;
+
+            if (!full_name || !phone || (!id && !password)) {
+                return showAlert('Validasi', 'Nama, Phone, dan Password (untuk user baru) wajib diisi.');
+            }
+
+            try {
+                const method = id ? 'PUT' : 'POST';
+                const path = id ? `/admin/users/${id}` : '/admin/users';
+                const body = { full_name, phone, email, password, store_name, total_capital };
+                
+                const res = await api(path, method, body);
+                showStatus(res.message);
+                closeUserModal();
+                loadUsers();
+            } catch (err) {
+                showAlert('Gagal Simpan', err.message, 'error');
+            }
+        }
+
+        async function deleteUser(id) {
+            const confirmed = await showConfirm('Hapus User', 'Apakah Anda yakin ingin menghapus user ini selamanya? Seluruh data device terkait juga akan dihapus.');
+            if (!confirmed) return;
+
+            try {
+                const res = await api(`/admin/users/${id}`, 'DELETE');
+                showStatus(res.message);
+                loadUsers();
+            } catch (err) {
+                showAlert('Gagal Hapus', err.message, 'error');
+            }
+        }
+    </script>
+</body>
+
+</html>

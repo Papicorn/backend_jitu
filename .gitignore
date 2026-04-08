@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Environment variables — JANGAN COMMIT KE GIT
+.env
+
+# Logs
+*.log
+npm-debug.log*
+
+# Runtime
+*.pid
+*.seed
+
+# Build
+dist/
+build/
