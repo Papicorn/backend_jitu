@@ -7,406 +7,491 @@
     <title>JITU Admin - Control Panel</title>
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <style>
-        .glass {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
         }
-
-        .tab-active {
-            border-color: #FFCA40;
-            color: #18181b;
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
     </style>
 </head>
 
-<body class="bg-[#F4F7FE] text-zinc-800 font-sans min-h-screen p-4 md:p-10">
+<body class="bg-[#F4F7FE] text-zinc-800 font-sans min-h-screen selection:bg-[#FFCA40] selection:text-zinc-950">
 
-    <div class="max-w-4xl mx-auto space-y-8">
-        <!-- Header -->
-        <header class="flex items-center justify-between mb-6">
-            <div>
-                <h1 class="text-3xl font-bold tracking-tight text-zinc-900">Admin Control Panel</h1>
-                <p class="text-zinc-500 mt-1">Sistem Aktivasi & Management UMKM JITU</p>
-            </div>
-            <div class="flex items-center gap-4">
-                <a href="/admin/logout"
-                    class="text-xs text-zinc-500 hover:text-red-500 font-medium transition-colors cursor-pointer">
-                    Logout →
-                </a>
-                <div
-                    class="w-12 h-12 bg-[#FFCA40] rounded-2xl flex items-center justify-center shadow-lg transform rotate-12">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="zinc-800" stroke-width="2.5"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                    </svg>
+    <div class="flex flex-col md:flex-row min-h-screen">
+        
+        <!-- Sidebar Navigation (Desktop) -->
+        <aside class="w-full md:w-80 bg-white text-zinc-800 flex flex-col justify-between p-6 border-b md:border-b-0 md:border-r border-zinc-200/60 shrink-0">
+            <div class="space-y-8">
+                <!-- Brand / Logo -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-12 h-12 bg-gradient-to-r from-[#FBCA24] to-[#FBBF24] text-white rounded-2xl flex items-center justify-center font-black text-2xl shadow-lg shadow-[#FBBF24]/20">
+                            JT
+                        </div>
+                        <div>
+                            <h1 class="text-sm font-black tracking-wider text-zinc-900 uppercase">JITU PANEL</h1>
+                            <p class="text-[10px] text-[#FBBF24] font-extrabold uppercase">OPERASIONAL UMKM</p>
+                        </div>
+                    </div>
+                    <!-- Mobile Logout Trigger -->
+                    <a href="/admin/logout" class="md:hidden text-[10px] text-zinc-500 hover:text-red-500 font-bold px-3 py-1.5 rounded-xl bg-zinc-50 border border-zinc-200 transition-all">
+                        LOGOUT
+                    </a>
+                </div>
+
+                <!-- Navigation Tabs (Sidebar items) -->
+                <nav class="flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-3 md:pb-0 scrollbar-hide border-b border-zinc-200/60 md:border-b-0">
+                    <button onclick="switchTab('activation')" id="tab-activation"
+                        class="w-auto md:w-full text-left py-3.5 px-5 rounded-2xl text-xs font-black uppercase tracking-wider transition-all duration-200 flex items-center gap-3.5 cursor-pointer whitespace-nowrap bg-gradient-to-r from-[#FBCA24] to-[#FBBF24] text-white shadow-md">
+                        <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                            <line x1="8" y1="21" x2="16" y2="21"/>
+                            <line x1="12" y1="17" x2="12" y2="21"/>
+                        </svg>
+                        <span>Device & Aktivasi</span>
+                    </button>
+                    <button onclick="switchTab('payments')" id="tab-payments"
+                        class="w-auto md:w-full text-left py-3.5 px-5 rounded-2xl text-xs font-black uppercase tracking-wider text-zinc-400 hover:text-zinc-800 hover:bg-zinc-55 transition-all duration-200 flex items-center gap-3.5 cursor-pointer whitespace-nowrap">
+                        <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <rect x="2" y="4" width="20" height="12" rx="2"/>
+                            <circle cx="12" cy="10" r="2"/>
+                            <path d="M7 10h.01M17 10h.01"/>
+                        </svg>
+                        <span>Antrean Beli</span>
+                    </button>
+                    <button onclick="switchTab('users')" id="tab-users"
+                        class="w-auto md:w-full text-left py-3.5 px-5 rounded-2xl text-xs font-black uppercase tracking-wider text-zinc-400 hover:text-zinc-800 hover:bg-zinc-55 transition-all duration-200 flex items-center gap-3.5 cursor-pointer whitespace-nowrap">
+                        <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                        <span>Database User</span>
+                    </button>
+                </nav>
+
+                <!-- Auth / Secret Key Section -->
+                <div class="hidden md:block pt-6 border-t border-zinc-200/60 space-y-4">
+                    <div>
+                        <h2 class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 pl-1">API KEY OTORISASI</h2>
+                        <div class="relative mt-2">
+                            <input type="password" id="adminSecret" placeholder="Input API Secret Key..."
+                                class="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-3 pl-5 pr-12 text-xs text-zinc-800 outline-none focus:border-[#FBBF24] transition-all placeholder:text-zinc-450">
+                            <button onclick="saveSecret()" class="absolute right-2.5 top-2 bg-gradient-to-r from-[#FBCA24] to-[#FBBF24] text-white p-2 rounded-xl active:scale-95 transition-all cursor-pointer shadow-sm">
+                                <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path d="M20 6L9 17l-5-5"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <p id="secretStatus" class="text-[10px] text-[#FBBF24] font-extrabold hidden flex items-center gap-1.5 pl-1">
+                        <span>✓</span> Otorisasi Lokal Aktif
+                    </p>
                 </div>
             </div>
-        </header>
 
-        <!-- Auth Section -->
-        <section class="glass rounded-3xl p-8 shadow-xl border border-white">
-            <h2 class="text-sm font-bold uppercase tracking-widest text-zinc-400 mb-4">ADMIN OTORISASI</h2>
-            <div class="flex flex-col md:flex-row gap-4">
-                <input type="password" id="adminSecret" placeholder="Masukkan Admin Secret Key"
-                    class="flex-1 bg-white border border-zinc-200 rounded-2xl py-4 px-6 outline-none focus:ring-2 focus:ring-[#FFCA40] transition-all">
-                <button onclick="saveSecret()"
-                    class="bg-zinc-900 text-white font-bold py-4 px-10 rounded-2xl hover:bg-zinc-700 transition-all cursor-pointer">
-                    Simpan Key
-                </button>
+            <!-- Footer / System Info -->
+            <div class="hidden md:block space-y-4 pt-6 border-t border-zinc-200/60">
+                <div class="flex items-center justify-between text-xs text-zinc-400">
+                    <span>Host API:</span>
+                    <span class="font-mono text-[10px] text-zinc-500">localhost:5000</span>
+                </div>
+                <a href="/admin/logout"
+                    class="w-full block text-center py-3 border border-zinc-200 hover:border-red-500/20 hover:bg-red-500/10 text-xs text-zinc-500 hover:text-red-500 font-bold rounded-2xl transition-all cursor-pointer">
+                    KELUAR PANEL
+                </a>
             </div>
-            <p id="secretStatus" class="text-xs text-emerald-600 mt-3 hidden">✅ Secret Key tersimpan di browser</p>
-        </section>
+        </aside>
 
-        <!-- Navigation Tabs -->
-        <nav class="flex gap-4 md:gap-8 border-b border-zinc-200 px-2 overflow-x-auto whitespace-nowrap scrollbar-hide">
-            <button onclick="switchTab('activation')" id="tab-activation"
-                class="pb-4 text-sm font-bold transition-all border-b-2 border-transparent tab-active cursor-pointer">
-                MANAJEMEN DEVICE
-            </button>
-            <button onclick="switchTab('payments')" id="tab-payments"
-                class="pb-4 text-sm font-bold text-zinc-400 transition-all border-b-2 border-transparent hover:text-zinc-600 cursor-pointer">
-                ANTREAN PEMBELIAN
-            </button>
-            <button onclick="switchTab('users')" id="tab-users"
-                class="pb-4 text-sm font-bold text-zinc-400 transition-all border-b-2 border-transparent hover:text-zinc-600 cursor-pointer">
-                LIST USER
-            </button>
-        </nav>
+        <!-- Main Workspace -->
+        <main class="flex-1 p-6 md:p-10 space-y-8 overflow-y-auto max-h-screen bg-[#F4F7FE]">
+            
+            <!-- Mobile Auth Trigger Alert -->
+            <div class="md:hidden bg-white border border-zinc-200/60 rounded-2xl p-5 space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-400">OTORISASI API KEY</span>
+                    <button onclick="saveSecretMobile()" class="bg-gradient-to-r from-[#FBCA24] to-[#FBBF24] text-white text-[10px] font-black px-4 py-1.5 rounded-xl transition-all cursor-pointer">SIMPAN</button>
+                </div>
+                <input type="password" id="adminSecretMobile" placeholder="Masukkan Secret Key..."
+                    class="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-3 px-4 text-xs text-zinc-800 outline-none focus:border-[#FBBF24]">
+            </div>
 
-        <!-- Activation Tab Content -->
-        <div id="content-activation" class="space-y-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Search User -->
-                <section class="glass rounded-3xl p-8 shadow-xl border border-white space-y-6">
-                    <h2 class="text-sm font-bold uppercase tracking-widest text-zinc-400">CARI USER</h2>
-                    <div class="space-y-4">
-                        <input type="text" id="phoneSearch" placeholder="Ketik No WA atau Kode Lisensi Grup"
-                            class="w-full bg-white border border-zinc-200 rounded-2xl py-4 px-6 outline-none focus:ring-2 focus:ring-[#FFCA40]">
-                        <button onclick="searchUser()"
-                            class="w-full bg-[#FFCA40] text-zinc-900 font-bold py-4 rounded-2xl hover:shadow-lg transition-all cursor-pointer">
-                            Cek Status & Device
-                        </button>
+            <!-- Content Area -->
+            <div class="space-y-6">
+
+                <!-- TAB 1: DEVICE & AKTIVASI -->
+                <div id="content-activation" class="space-y-6">
+                    
+                    <!-- Bento Grid Top Row -->
+                    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                        
+                        <!-- Panel Cari User (Col-Span 3) -->
+                        <div class="lg:col-span-3 bg-white rounded-3xl p-8 border border-zinc-200/50 flex flex-col justify-between min-h-[340px] relative overflow-hidden group shadow-sm">
+                            <div class="space-y-5">
+                                <div class="flex items-center justify-between">
+                                    <h2 class="text-[10px] font-extrabold uppercase tracking-widest text-[#FBBF24]">STATUS & LISENSI USER</h2>
+                                    <span class="w-2.5 h-2.5 rounded-full bg-[#FBBF24] animate-pulse"></span>
+                                </div>
+                                <p class="text-xs text-zinc-500 leading-relaxed max-w-xl">Masukkan WhatsApp UMKM terdaftar atau Serial Lisensi 6-digit untuk melihat daftar hardware yang terkunci, sisa durasi langganan, dan masa kadaluarsa.</p>
+                                <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                                    <input type="text" id="phoneSearch" placeholder="No WhatsApp (08xxx) atau Serial Lisensi..."
+                                        class="flex-1 bg-zinc-50 border border-zinc-200 rounded-2xl py-3.5 px-5 text-sm text-zinc-800 outline-none focus:border-[#FBBF24] transition-all placeholder:text-zinc-400">
+                                    <button onclick="searchUser()"
+                                        class="bg-gradient-to-r from-[#FBCA24] to-[#FBBF24] text-white font-black text-xs py-3.5 px-8 rounded-2xl transition-all cursor-pointer shadow-md active:scale-95">
+                                        CEK USER
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Detail User Terpilih -->
+                            <div id="userInfo" class="hidden border-t border-zinc-150 pt-6 mt-6 space-y-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="p-4 bg-zinc-50 rounded-2xl border border-zinc-200/50">
+                                        <p class="text-[9px] text-zinc-450 uppercase font-bold tracking-wider">NAMA UMKM / PEMILIK</p>
+                                        <p id="userName" class="text-sm font-black text-zinc-900 mt-1">-</p>
+                                    </div>
+                                    <div class="p-4 bg-zinc-50 rounded-2xl border border-zinc-200/50 flex justify-between items-center">
+                                        <div>
+                                            <p class="text-[9px] text-zinc-450 uppercase font-bold tracking-wider">HARDWARE TERDAFTAR</p>
+                                            <p id="userDeviceCount" class="text-sm font-black text-zinc-900 mt-1">0 / 2</p>
+                                        </div>
+                                        <span class="text-[9px] bg-zinc-100 border border-zinc-200 text-zinc-500 py-1 px-2.5 rounded-lg font-bold">LIMIT 2</span>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="p-4 bg-zinc-50 rounded-2xl border border-zinc-200/50 flex justify-between items-center">
+                                        <div>
+                                            <p class="text-[9px] text-zinc-450 uppercase font-bold tracking-wider">STATUS LISENSI</p>
+                                            <div class="mt-1" id="userCodeStatus">-</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Masa Aktif Info -->
+                                    <div id="expiryInfo" class="hidden p-4 bg-zinc-50 rounded-2xl border border-zinc-200/50 flex justify-between items-center gap-3">
+                                        <div>
+                                            <p class="text-[9px] text-zinc-450 uppercase font-bold tracking-wider">MASA BERLAKU AKTIVASI</p>
+                                            <div id="expiryStatus" class="text-xs font-bold text-zinc-900 mt-1">-</div>
+                                        </div>
+                                        <button id="extendBtn" onclick="extendFromSearch()" 
+                                            class="bg-gradient-to-r from-[#FBCA24] to-[#FBBF24] text-white px-3.5 py-2 rounded-xl font-black text-[10px] active:scale-95 transition-all cursor-pointer shadow-sm">
+                                            +30 HARI
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel Set Aktivasi Manual (Col-Span 2) -->
+                        <div class="lg:col-span-2 bg-white rounded-3xl p-8 border border-zinc-200/50 flex flex-col justify-between min-h-[340px] relative overflow-hidden shadow-sm">
+                            <div class="space-y-4">
+                                <h2 class="text-[10px] font-bold uppercase tracking-widest text-zinc-450">AKTIVASI MANUAL FORCE</h2>
+                                <p class="text-xs text-zinc-500 leading-relaxed">Secara paksa menautkan WhatsApp UMKM dengan serial lisensi 6-digit kustom bypass pembayaran.</p>
+                                
+                                <div class="space-y-3 pt-2">
+                                    <div class="space-y-1.5">
+                                        <label class="text-[9px] font-bold text-zinc-450 uppercase tracking-wider pl-1">WHATSAPP TUJUAN</label>
+                                        <input type="text" id="targetPhone" placeholder="Contoh: 08123456xxx"
+                                            class="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-3 px-4 text-xs text-zinc-800 outline-none focus:border-[#FBBF24] transition-all placeholder:text-zinc-400">
+                                    </div>
+                                    <div class="space-y-1.5">
+                                        <label class="text-[9px] font-bold text-zinc-450 uppercase tracking-wider pl-1">SERIAL KODE LISENSI</label>
+                                        <div class="flex gap-2">
+                                            <input type="text" id="newCode" placeholder="Masukkan 6-digit"
+                                                class="flex-1 bg-zinc-50 border border-zinc-200 rounded-2xl py-3 px-4 text-xs text-zinc-800 outline-none focus:border-[#FBBF24] transition-all placeholder:text-zinc-400">
+                                            <button onclick="genRandom()"
+                                                class="bg-zinc-100 border border-zinc-200 text-zinc-650 hover:bg-zinc-200 px-4 rounded-2xl font-bold text-[10px] active:scale-95 transition-all cursor-pointer">
+                                                RANDOM
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="setActivation()"
+                                class="w-full bg-zinc-900 hover:bg-zinc-800 text-white font-black text-xs py-4 rounded-2xl active:scale-[0.98] transition-all cursor-pointer shadow-sm mt-5 tracking-widest uppercase">
+                                UPDATE KODE LISENSI
+                            </button>
+                        </div>
+
                     </div>
 
-                    <div id="userInfo" class="hidden space-y-4 pt-4 border-t border-zinc-100">
-                        <div>
-                            <p class="text-[10px] text-zinc-400 uppercase font-bold tracking-wider">Nama User</p>
-                            <p id="userName" class="text-lg font-bold text-zinc-900">-</p>
+                    <!-- Devices Table -->
+                    <div id="devicesSection" class="bg-white rounded-3xl p-8 border border-zinc-200/50 hidden shadow-sm">
+                        <div class="flex items-center gap-2.5 mb-5 border-b border-zinc-150 pb-4">
+                            <span class="w-2.5 h-2.5 rounded-full bg-[#FBBF24]"></span>
+                            <h2 class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">DAFTAR DEVICE HARDWARE TERKUNCI</h2>
                         </div>
-                        <div class="flex justify-between">
-                            <div>
-                                <p class="text-[10px] text-zinc-400 uppercase font-bold tracking-wider">Status Kode</p>
-                                <span id="userCodeStatus"
-                                    class="inline-block mt-1 px-3 py-1 bg-zinc-100 rounded-full text-[10px] font-bold">-</span>
-                            </div>
-                            <div>
-                                <p class="text-[10px] text-zinc-400 uppercase font-bold tracking-wider">Device Aktif</p>
-                                <span id="userDeviceCount" class="text-lg font-bold">0 / 2</span>
-                            </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse min-w-[550px]">
+                                <thead>
+                                    <tr class="text-[9px] text-zinc-400 uppercase tracking-widest font-black border-b border-zinc-200 pb-3">
+                                        <th class="pb-3 pl-2">DEVICE ID (UNIQUE KEY)</th>
+                                        <th class="pb-3">DEVICE MANUFACTURER (OS)</th>
+                                        <th class="pb-3">WAKTU PENDAFTARAN</th>
+                                        <th class="pb-3">AKTIVITAS TERAKHIR</th>
+                                        <th class="pb-3 text-right pr-2">AKSI OTORISASI</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="deviceTableBody" class="divide-y divide-zinc-100 text-xs">
+                                    <!-- Dynamic rows loaded here -->
+                                </tbody>
+                            </table>
                         </div>
-                        <!-- Masa Aktif Info -->
-                        <div id="expiryInfo" class="hidden rounded-2xl p-4 border space-y-2">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <p class="text-[10px] text-zinc-400 uppercase font-bold tracking-wider">Masa Aktif</p>
-                                    <span id="expiryStatus" class="text-sm font-bold">-</span>
-                                </div>
-                                <button id="extendBtn" onclick="extendFromSearch()" 
-                                    class="bg-[#FFCA40] text-zinc-900 px-4 py-2 rounded-xl font-bold text-[10px] hover:shadow-lg transition-all cursor-pointer">
-                                    + 30 HARI
+                    </div>
+                </div>
+
+                <!-- TAB 2: ANTREAN BELI (PAYMENTS) -->
+                <div id="content-payments" class="hidden space-y-6">
+                    
+                    <!-- Lunas Antrean -->
+                    <div class="bg-white rounded-3xl p-8 border border-zinc-200/50 shadow-sm">
+                        <div class="flex justify-between items-center mb-6 pb-4 border-b border-zinc-150">
+                            <div class="flex items-center gap-3">
+                                <span class="w-2.5 h-2.5 rounded-full bg-[#FBBF24] animate-ping"></span>
+                                <h2 class="text-[10px] font-bold uppercase tracking-widest text-zinc-800">ANTREAN TRANSAKSI QRIS LUNAS</h2>
+                            </div>
+                            <button onclick="loadPayments()"
+                                class="bg-zinc-50 border border-zinc-200 text-zinc-500 hover:text-zinc-800 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider cursor-pointer transition-all active:scale-95">
+                                REFRESH DATA ↻
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse min-w-[650px]">
+                                <thead>
+                                    <tr class="text-[9px] text-zinc-400 uppercase tracking-widest font-black border-b border-zinc-200 pb-3">
+                                        <th class="pb-3 pl-2">TANGGAL TRANSAKSI</th>
+                                        <th class="pb-3">DETAIL ENTITAS UMKM & OWNER</th>
+                                        <th class="pb-3">NOMOR WHATSAPP</th>
+                                        <th class="pb-3">PLAN LAYANAN</th>
+                                        <th class="pb-3 text-right pr-2">AKSI PROSES</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="paymentTableBody" class="divide-y divide-zinc-100 text-xs">
+                                    <tr>
+                                        <td colspan="5" class="py-8 text-center text-zinc-400">Mengambil data transaksi lunas...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- QRIS Pending Antrean -->
+                    <div class="bg-white rounded-3xl p-8 border border-zinc-200/50 shadow-sm">
+                        <div class="flex items-center gap-2.5 mb-6 pb-4 border-b border-zinc-150">
+                            <span class="w-2 h-2 rounded-full bg-zinc-300"></span>
+                            <h2 class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">SESI QRIS MENUNGGU PEMBAYARAN (PENDING)</h2>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse min-w-[550px]">
+                                <thead>
+                                    <tr class="text-[9px] text-zinc-400 uppercase tracking-widest font-black border-b border-zinc-200 pb-3">
+                                        <th class="pb-3 pl-2">WAKTU TRANSAKSI</th>
+                                        <th class="pb-3">NAMA UMKM / PEMILIK</th>
+                                        <th class="pb-3">NOMOR WHATSAPP</th>
+                                        <th class="pb-3">STATUS VERIFIKASI</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pendingTableBody" class="divide-y divide-zinc-100 text-xs">
+                                    <!-- Dynamic rows loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: LIST USER -->
+                <div id="content-users" class="hidden space-y-6">
+                    <div class="bg-white rounded-3xl p-8 border border-zinc-200/50 shadow-sm">
+                        <div class="flex justify-between items-center mb-6 pb-4 border-b border-zinc-150">
+                            <div>
+                                <h2 class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">DATABASE USER UTAMA</h2>
+                            </div>
+                            <div class="flex gap-3 items-center">
+                                <button onclick="openUserModal()"
+                                    class="bg-gradient-to-r from-[#FBCA24] to-[#FBBF24] text-white px-5 py-2.5 rounded-2xl font-black text-[10px] active:scale-[0.98] transition-all cursor-pointer uppercase tracking-widest shadow-md">
+                                    + BUAT USER
+                                </button>
+                                <button onclick="loadUsers()"
+                                    class="bg-zinc-50 border border-zinc-200 text-zinc-500 hover:text-zinc-800 px-4 py-2 rounded-xl text-[10px] font-bold cursor-pointer transition-all active:scale-95">
+                                    REFRESH ↻
                                 </button>
                             </div>
                         </div>
-                    </div>
-                </section>
-
-                <!-- Set Activation -->
-                <section class="glass rounded-3xl p-8 shadow-xl border border-white space-y-6">
-                    <h2 class="text-sm font-bold uppercase tracking-widest text-zinc-400">SET KODE AKTIVASI</h2>
-                    <div class="space-y-4">
-                        <input type="text" id="targetPhone" placeholder="Nomor Telepon User"
-                            class="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-4 px-6 outline-none focus:ring-2 focus:ring-[#FFCA40]">
-                        <div class="flex gap-2">
-                            <input type="text" id="newCode" placeholder="Kode Aktivasi Baru"
-                                class="flex-1 bg-zinc-50 border border-zinc-200 rounded-2xl py-4 px-6 outline-none focus:ring-2 focus:ring-[#FFCA40]">
-                            <button onclick="genRandom()"
-                                class="bg-zinc-100 text-zinc-600 px-4 rounded-2xl font-bold text-xs">RANDOM</button>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse min-w-[800px]">
+                                <thead>
+                                    <tr class="text-[9px] text-zinc-400 uppercase tracking-widest font-black border-b border-zinc-200 pb-3">
+                                        <th class="pb-3 pl-2">ENTITAS / NAMA LENGKAP</th>
+                                        <th class="pb-3">WHATSAPP</th>
+                                        <th class="pb-3">SERIAL KODE LISENSI</th>
+                                        <th class="pb-3">TGL KEDALUWARSA</th>
+                                        <th class="pb-3 text-right pr-2">OPERASI DATA</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="userTableBody" class="divide-y divide-zinc-100 text-xs">
+                                    <tr>
+                                        <td colspan="5" class="py-8 text-center text-zinc-400">Memuat database consignor...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <button onclick="setActivation()"
-                            class="w-full bg-zinc-900 text-white font-bold py-4 rounded-2xl hover:bg-zinc-700 transition-all cursor-pointer shadow-xl">
-                            Simpan Kode Aktivasi
-                        </button>
                     </div>
-                </section>
+                </div>
+
             </div>
+        </main>
+    </div>
 
-            <!-- Devices Table -->
-            <section id="devicesSection" class="glass rounded-3xl p-8 shadow-xl border border-white hidden">
-                <h2 class="text-sm font-bold uppercase tracking-widest text-zinc-400 mb-6">DEVICE YANG TERDAFTAR</h2>
-                <div class="overflow-x-auto pb-4">
-                    <table class="w-full text-left min-w-[600px]">
-                        <thead>
-                            <tr
-                                class="text-[10px] text-zinc-400 uppercase tracking-wider font-bold border-b border-zinc-100">
-                                <th class="pb-4">Device ID</th>
-                                <th class="pb-4">Nama Device</th>
-                                <th class="pb-4">Aktivasi</th>
-                                <th class="pb-4">Terakhir Digunakan</th>
-                                <th class="pb-4 text-right">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="deviceTableBody">
-                            <!-- Rows -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-        </div>
+    <!-- Modals & Overlay System -->
 
-        <!-- Payments Tab Content -->
-        <div id="content-payments" class="hidden space-y-12">
-            <!-- Ready to Process Section -->
-            <section class="glass rounded-3xl p-8 shadow-xl border border-white">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-sm font-bold uppercase tracking-widest text-emerald-600">SIAP DIPROSES (LUNAS)</h2>
-                    <button onclick="loadPayments()"
-                        class="text-[10px] font-bold text-zinc-500 hover:text-zinc-900 transition-colors uppercase tracking-widest">Refresh
-                        ↻</button>
-                </div>
-                <div class="overflow-x-auto pb-4">
-                    <table class="w-full text-left min-w-[700px]">
-                        <thead>
-                            <tr
-                                class="text-[10px] text-zinc-400 uppercase tracking-wider font-bold border-b border-zinc-100">
-                                <th class="pb-4">Tgl Lunas</th>
-                                <th class="pb-4">Detail UMKM</th>
-                                <th class="pb-4">WhatsApp</th>
-                                <th class="pb-4">Plan</th>
-                                <th class="pb-4 text-right">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="paymentTableBody">
-                            <!-- Rows -->
-                            <tr>
-                                <td colspan="5" class="py-10 text-center text-zinc-400 text-sm">Memuat data...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- Pending Section -->
-            <section class="glass rounded-3xl p-8 shadow-xl border border-white opacity-90">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-sm font-bold uppercase tracking-widest text-zinc-400">MENUNGGU PEMBAYARAN (QRIS
-                        PENDING)</h2>
-                </div>
-                <div class="overflow-x-auto pb-4">
-                    <table class="w-full text-left min-w-[600px]">
-                        <thead>
-                            <tr
-                                class="text-[10px] text-zinc-400 uppercase tracking-wider font-bold border-b border-zinc-100">
-                                <th class="pb-4">Tgl Order</th>
-                                <th class="pb-4">UMKM / Pemilik</th>
-                                <th class="pb-4">WhatsApp</th>
-                                <th class="pb-4">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="pendingTableBody">
-                            <!-- Rows -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-        </div>
-
-        <!-- Registered Users Tab Content -->
-        <div id="content-users" class="hidden space-y-8">
-            <section class="glass rounded-3xl p-8 shadow-xl border border-white">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-sm font-bold uppercase tracking-widest text-zinc-400">USER YANG TELAH TERDAFTAR</h2>
-                <div class="flex gap-4 items-center">
-                    <button onclick="openUserModal()"
-                        class="bg-zinc-900 text-[#FFCA40] px-4 py-2 rounded-xl font-bold text-[10px] hover:shadow-lg transition-all cursor-pointer uppercase tracking-widest">
-                        + Tambah User
-                    </button>
-                    <button onclick="loadUsers()"
-                        class="text-[10px] font-bold text-zinc-500 hover:text-zinc-900 transition-colors uppercase tracking-widest">Refresh
-                        ↻</button>
-                </div>
-                </div>
-                <div class="overflow-x-auto pb-4">
-                    <table class="w-full text-left min-w-[900px]">
-                        <thead>
-                            <tr
-                                class="text-[10px] text-zinc-400 uppercase tracking-wider font-bold border-b border-zinc-100">
-                                <th class="pb-4">Nama Lengkap</th>
-                                <th class="pb-4">WhatsApp</th>
-                                <th class="pb-4">Kode Lisensi</th>
-                                <th class="pb-4">Masa Aktif</th>
-                                <th class="pb-4 text-right">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="userTableBody">
-                            <!-- Rows -->
-                            <tr>
-                                <td colspan="5" class="py-10 text-center text-zinc-400 text-sm">Memuat data user...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-        </div>
-
-        <!-- Add/Edit User Modal -->
-        <div id="userModal"
-            class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center hidden z-50 p-4">
-            <div class="bg-white rounded-[32px] p-8 max-w-lg w-full shadow-2xl space-y-6 transform scale-95 opacity-0 transition-all duration-300"
-                id="userBox">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 id="userModalTitle" class="text-2xl font-bold text-zinc-900">Tambah User Baru</h3>
-                    <button onclick="closeUserModal()" class="text-zinc-400 hover:text-zinc-600 transition-colors cursor-pointer">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                        </svg>
-                    </button>
+    <!-- Add/Edit User Modal -->
+    <div id="userModal"
+        class="fixed inset-0 bg-zinc-950/40 backdrop-blur-sm flex items-center justify-center hidden z-50 p-4 transition-all duration-300">
+        <div class="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl space-y-6 transform scale-95 opacity-0 transition-all duration-300 border border-zinc-150"
+            id="userBox">
+            <div class="flex justify-between items-center pb-4 border-b border-zinc-100">
+                <h3 id="userModalTitle" class="text-sm font-black text-zinc-900 uppercase tracking-wider">Tambah User Baru</h3>
+                <button onclick="closeUserModal()" class="text-zinc-400 hover:text-zinc-800 transition-colors cursor-pointer p-1.5 rounded-xl hover:bg-zinc-50">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <form id="userForm" class="space-y-4 text-left overflow-y-auto max-h-[60vh] pr-1">
+                <input type="hidden" id="editUserId">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="text-[9px] font-bold text-zinc-500 uppercase tracking-wider pl-1">Nama Lengkap</label>
+                        <input type="text" id="userFullName" required class="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-3 px-4 text-xs outline-none focus:border-[#FBBF24] transition-all">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-[9px] font-bold text-zinc-500 uppercase tracking-wider pl-1">WhatsApp (08xxx)</label>
+                        <input type="text" id="userPhone" required class="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-3 px-4 text-xs outline-none focus:border-[#FBBF24] transition-all">
+                    </div>
                 </div>
                 
-                <form id="userForm" class="space-y-4 text-left overflow-y-auto max-h-[70vh] pr-2 scrollbar-hide">
-                    <input type="hidden" id="editUserId">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest pl-1">Nama Lengkap</label>
-                            <input type="text" id="userFullName" required class="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-3 px-4 outline-none focus:ring-2 focus:ring-[#FFCA40]">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest pl-1">WhatsApp (08xxx)</label>
-                            <input type="text" id="userPhone" required class="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-3 px-4 outline-none focus:ring-2 focus:ring-[#FFCA40]">
-                        </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="text-[9px] font-bold text-zinc-500 uppercase tracking-wider pl-1">Email</label>
+                        <input type="email" id="userEmail" class="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-3 px-4 text-xs outline-none focus:border-[#FBBF24] transition-all">
                     </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest pl-1">Email</label>
-                            <input type="email" id="userEmail" class="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-3 px-4 outline-none focus:ring-2 focus:ring-[#FFCA40]">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest pl-1">Store Name</label>
-                            <input type="text" id="userStore" class="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-3 px-4 outline-none focus:ring-2 focus:ring-[#FFCA40]">
-                        </div>
+                    <div class="space-y-1.5">
+                        <label class="text-[9px] font-bold text-zinc-500 uppercase tracking-wider pl-1">Nama Toko / UMKM</label>
+                        <input type="text" id="userStore" class="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-3 px-4 text-xs outline-none focus:border-[#FBBF24] transition-all">
                     </div>
+                </div>
 
-                    <div class="space-y-1">
-                        <label id="passLabel" class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest pl-1">Password</label>
-                        <input type="password" id="userPassword" class="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-3 px-4 outline-none focus:ring-2 focus:ring-[#FFCA40]" placeholder="Kosongkan jika tidak ganti">
-                    </div>
+                <div class="space-y-1.5">
+                    <label id="passLabel" class="text-[9px] font-bold text-zinc-500 uppercase tracking-wider pl-1">Password</label>
+                    <input type="password" id="userPassword" class="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-3 px-4 text-xs outline-none focus:border-[#FBBF24] transition-all" placeholder="Kosongkan jika tidak ingin ganti">
+                </div>
 
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest pl-1">Modal Awal (Capital)</label>
-                        <input type="number" id="userCapital" class="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-3 px-4 outline-none focus:ring-2 focus:ring-[#FFCA40]" value="0">
-                    </div>
-                </form>
+                <div class="space-y-1.5">
+                    <label class="text-[9px] font-bold text-zinc-500 uppercase tracking-wider pl-1">Modal Awal Toko (Rupiah)</label>
+                    <input type="number" id="userCapital" class="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-3 px-4 text-xs outline-none focus:border-[#FBBF24] transition-all" value="0">
+                </div>
+            </form>
 
-                <div class="flex gap-3 pt-4 border-t border-zinc-100">
-                    <button onclick="closeUserModal()"
-                        class="flex-1 bg-zinc-100 text-zinc-600 font-bold py-4 rounded-2xl hover:bg-zinc-200 transition-all cursor-pointer">
-                        Batal
-                    </button>
-                    <button onclick="saveUser()"
-                        class="flex-1 bg-zinc-900 text-[#FFCA40] font-bold py-4 rounded-2xl hover:bg-zinc-700 transition-all cursor-pointer shadow-xl">
-                        Simpan Perubahan
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Status Modal (Success Processing) -->
-        <div id="processingModal"
-            class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center hidden z-50 p-4">
-            <div class="bg-white rounded-[32px] p-8 max-w-sm w-full shadow-2xl space-y-6 text-center">
-                <div
-                    class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full mx-auto flex items-center justify-center">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                </div>
-                <div>
-                    <h3 class="text-2xl font-bold text-zinc-900">UMKM Berhasil Diproses!</h3>
-                    <p class="text-sm text-zinc-500 mt-2">Akun telah dibuat dan kode aktivasi di-set.</p>
-                </div>
-                <div class="bg-zinc-50 rounded-2xl p-6 space-y-1 border border-zinc-100">
-                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Kode Aktivasi</p>
-                    <p id="processedCode" class="text-4xl font-black text-zinc-900 tracking-tighter">------</p>
-                </div>
-                <div class="text-left bg-zinc-50 rounded-2xl p-4 space-y-2 text-xs">
-                    <p><strong>Email:</strong> <span id="processedEmail"></span></p>
-                    <p><strong>Password:</strong> <span class="bg-zinc-200 px-1 rounded">jitu1234</span></p>
-                </div>
-                <button onclick="closeModal()"
-                    class="w-full bg-zinc-900 text-white font-bold py-4 rounded-2xl hover:bg-zinc-700 transition-all cursor-pointer">
-                    Selesai
+            <div class="flex gap-3 pt-4 border-t border-zinc-100">
+                <button onclick="closeUserModal()"
+                    class="flex-1 bg-zinc-50 border border-zinc-200 hover:bg-zinc-100 text-zinc-500 font-bold py-3.5 rounded-2xl transition-all cursor-pointer text-xs uppercase tracking-wider">
+                    Batal
+                </button>
+                <button onclick="saveUser()"
+                    class="flex-1 bg-gradient-to-r from-[#FBCA24] to-[#FBBF24] text-white font-black py-3.5 rounded-2xl active:scale-[0.98] transition-all cursor-pointer shadow-sm text-xs uppercase tracking-wider">
+                    Simpan User
                 </button>
             </div>
         </div>
+    </div>
 
-        <!-- Custom Alert Modal -->
-        <div id="alertModal"
-            class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center hidden z-[100] p-4">
-            <div class="bg-white rounded-[32px] p-8 max-w-sm w-full shadow-2xl space-y-6 text-center transform scale-95 opacity-0 transition-all duration-300"
-                id="alertBox">
-                <div id="alertIcon" class="w-16 h-16 rounded-full mx-auto flex items-center justify-center">
-                    <!-- Icon inject based on type -->
-                </div>
-                <div>
-                    <h3 id="alertTitle" class="text-xl font-bold text-zinc-900">Judul</h3>
-                    <p id="alertMsg" class="text-sm text-zinc-500 mt-2 line-clamp-3">Pesan akan muncul di sini.</p>
-                </div>
-                <button onclick="closeAlert()"
-                    class="w-full bg-zinc-900 text-white font-bold py-4 rounded-2xl hover:bg-zinc-700 transition-all cursor-pointer">
-                    Mengerti
+    <!-- Status Modal (Success Processing Payment) -->
+    <div id="processingModal"
+        class="fixed inset-0 bg-zinc-950/40 backdrop-blur-sm flex items-center justify-center hidden z-50 p-4">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl space-y-6 text-center border border-zinc-150">
+            <div class="w-16 h-16 bg-[#FBBF24]/10 text-[#FBBF24] rounded-2xl mx-auto flex items-center justify-center">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                </svg>
+            </div>
+            <div>
+                <h3 class="text-sm font-black text-zinc-900 uppercase tracking-wider">UMKM Berhasil Diproses!</h3>
+                <p class="text-xs text-zinc-500 mt-1">Akun consignor dibuat otomatis dan serial lisensi di-set.</p>
+            </div>
+            <div class="bg-zinc-50 border border-zinc-200/60 rounded-2xl p-5 space-y-1.5">
+                <p class="text-[9px] font-bold text-zinc-400 uppercase tracking-wider">KODE LISENSI AKTIVASI</p>
+                <p id="processedCode" class="text-3xl font-black text-zinc-950 tracking-widest">------</p>
+            </div>
+            <div class="text-left bg-zinc-50 border border-zinc-200/60 rounded-2xl p-5 space-y-2 text-xs">
+                <p class="flex justify-between"><strong>Email:</strong> <span id="processedEmail" class="font-bold text-zinc-800"></span></p>
+                <p class="flex justify-between"><strong>Password:</strong> <span class="bg-zinc-100 border border-zinc-200 px-2 py-0.5 rounded font-mono font-bold text-zinc-800">jitu1234</span></p>
+            </div>
+            <button onclick="closeModal()"
+                class="w-full bg-gradient-to-r from-[#FBCA24] to-[#FBBF24] text-white font-black py-4 rounded-2xl transition-all cursor-pointer text-xs uppercase tracking-wider">
+                Tutup Window
+            </button>
+        </div>
+    </div>
+
+    <!-- Custom Alert Modal -->
+    <div id="alertModal"
+        class="fixed inset-0 bg-zinc-950/40 backdrop-blur-sm flex items-center justify-center hidden z-[100] p-4">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl space-y-6 text-center transform scale-95 opacity-0 transition-all duration-300 border border-zinc-150"
+            id="alertBox">
+            <div id="alertIcon" class="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center">
+                <!-- Dynamic SVG icon -->
+            </div>
+            <div>
+                <h3 id="alertTitle" class="text-sm font-black text-zinc-900 uppercase tracking-wider">Judul</h3>
+                <p id="alertMsg" class="text-xs text-zinc-500 mt-2 leading-relaxed">Pesan status sistem.</p>
+            </div>
+            <button onclick="closeAlert()"
+                class="w-full bg-zinc-900 hover:bg-zinc-800 text-white font-bold py-3.5 rounded-2xl transition-all cursor-pointer text-xs uppercase tracking-wider">
+                Mengerti
+            </button>
+        </div>
+    </div>
+
+    <!-- Custom Confirm Modal -->
+    <div id="confirmModal"
+        class="fixed inset-0 bg-zinc-950/40 backdrop-blur-sm flex items-center justify-center hidden z-[100] p-4">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl space-y-6 text-center transform scale-95 opacity-0 transition-all duration-300 border border-zinc-150"
+            id="confirmBox">
+            <div class="w-14 h-14 bg-amber-500/10 text-amber-500 rounded-2xl mx-auto flex items-center justify-center border border-amber-500/20">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+            </div>
+            <div>
+                <h3 id="confirmTitle" class="text-sm font-black text-zinc-900 uppercase tracking-wider">Konfirmasi Aksi</h3>
+                <p id="confirmMsg" class="text-xs text-zinc-500 mt-2 leading-relaxed">Apakah anda sangat yakin?</p>
+            </div>
+            <div class="flex gap-3">
+                <button id="confirmCancel"
+                    class="flex-1 bg-zinc-50 border border-zinc-200 hover:bg-zinc-100 text-zinc-500 font-bold py-3.5 rounded-2xl transition-all cursor-pointer text-xs uppercase tracking-wider">
+                    Batal
+                </button>
+                <button id="confirmOk"
+                    class="flex-1 bg-red-500 hover:bg-red-650 text-white font-bold py-3.5 rounded-2xl transition-all cursor-pointer shadow-sm text-xs uppercase tracking-wider">
+                    Ya, Yakin
                 </button>
             </div>
         </div>
+    </div>
 
-        <!-- Custom Confirm Modal -->
-        <div id="confirmModal"
-            class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center hidden z-[100] p-4">
-            <div class="bg-white rounded-[32px] p-8 max-w-sm w-full shadow-2xl space-y-6 text-center transform scale-95 opacity-0 transition-all duration-300"
-                id="confirmBox">
-                <div
-                    class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full mx-auto flex items-center justify-center">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10" />
-                        <line x1="12" y1="8" x2="12" y2="12" />
-                        <line x1="12" y1="16" x2="12.01" y2="16" />
-                    </svg>
-                </div>
-                <div>
-                    <h3 id="confirmTitle" class="text-xl font-bold text-zinc-900">Konfirmasi</h3>
-                    <p id="confirmMsg" class="text-sm text-zinc-500 mt-2">Apakah Anda yakin ingin melakukan tindakan
-                        ini?</p>
-                </div>
-                <div class="flex gap-3">
-                    <button id="confirmCancel"
-                        class="flex-1 bg-zinc-100 text-zinc-600 font-bold py-4 rounded-2xl hover:bg-zinc-200 transition-all cursor-pointer">
-                        Batal
-                    </button>
-                    <button id="confirmOk"
-                        class="flex-1 bg-red-500 text-white font-bold py-4 rounded-2xl hover:bg-red-600 transition-all cursor-pointer shadow-lg shadow-red-200">
-                        Yakin
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Toast Notification -->
-        <div id="mainStatus"
-            class="fixed bottom-10 right-10 max-w-sm w-full p-4 rounded-2xl shadow-2xl translate-y-20 transition-all opacity-0 pointer-events-none z-50">
-            -
-        </div>
+    <!-- Toast Notification -->
+    <div id="mainStatus"
+        class="fixed bottom-10 right-10 max-w-sm w-full p-4 rounded-xl shadow-2xl translate-y-20 transition-all duration-300 opacity-0 pointer-events-none z-50 text-xs font-semibold">
+        -
     </div>
 
     <script>
@@ -422,11 +507,11 @@
             document.getElementById('alertMsg').innerText = msg;
 
             if (type === 'error') {
-                icon.className = "w-16 h-16 bg-red-100 text-red-600 rounded-full mx-auto flex items-center justify-center";
-                icon.innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+                icon.className = "w-14 h-14 bg-red-50 text-red-500 rounded-2xl mx-auto flex items-center justify-center border border-red-200";
+                icon.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
             } else {
-                icon.className = "w-16 h-16 bg-[#FFCA40]/20 text-zinc-900 rounded-full mx-auto flex items-center justify-center";
-                icon.innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+                icon.className = "w-14 h-14 bg-amber-50 text-amber-500 rounded-2xl mx-auto flex items-center justify-center border border-amber-200";
+                icon.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
             }
 
             modal.classList.remove('hidden');
@@ -473,7 +558,7 @@
         function showStatus(msg, err = false) {
             const el = document.getElementById('mainStatus');
             el.innerText = msg;
-            el.className = `fixed bottom-10 right-10 max-w-sm w-full p-4 rounded-2xl shadow-2xl transition-all ${err ? 'bg-red-500 text-white' : 'bg-emerald-500 text-white'}`;
+            el.className = `fixed bottom-10 right-10 max-w-sm w-full p-4 rounded-xl shadow-2xl transition-all duration-300 ${err ? 'bg-red-500 text-white shadow-red-500/10' : 'bg-zinc-900 text-[#FFCA40] font-black'}`;
             el.classList.remove('opacity-0', 'translate-y-20');
             el.classList.add('opacity-100', 'translate-y-0');
             setTimeout(() => {
@@ -492,14 +577,13 @@
             const tabs = ['activation', 'payments', 'users'];
             tabs.forEach(t => {
                 const btn = document.getElementById(`tab-${t}`);
-                btn.classList.remove('tab-active', 'text-zinc-900');
-                btn.classList.add('text-zinc-400');
+                btn.className = "w-auto md:w-full text-left py-3.5 px-5 rounded-2xl text-xs font-black uppercase tracking-wider text-zinc-400 hover:text-zinc-800 hover:bg-zinc-100 transition-all duration-200 flex items-center gap-3.5 cursor-pointer whitespace-nowrap";
             });
 
             // Activate current
             document.getElementById(`content-${tab}`).classList.remove('hidden');
-            document.getElementById(`tab-${tab}`).classList.add('tab-active', 'text-zinc-900');
-            document.getElementById(`tab-${tab}`).classList.remove('text-zinc-400');
+            const currentTab = document.getElementById(`tab-${tab}`);
+            currentTab.className = "w-auto md:w-full text-left py-3.5 px-5 rounded-2xl text-xs font-black uppercase tracking-wider transition-all duration-200 flex items-center gap-3.5 cursor-pointer whitespace-nowrap bg-gradient-to-r from-[#FBCA24] to-[#FBBF24] text-white shadow-md";
 
             if (tab === 'payments') loadPayments();
             if (tab === 'users') loadUsers();
@@ -541,15 +625,15 @@
                 document.getElementById('userInfo').classList.remove('hidden');
                 document.getElementById('userName').innerText = data.user.full_name;
                 document.getElementById('userCodeStatus').innerText = data.user.has_activation ? 'AKTIF' : 'BELUM SET';
-                document.getElementById('userCodeStatus').className = `inline-block mt-1 px-3 py-1 rounded-full text-[10px] font-bold ${data.user.has_activation ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`;
+                document.getElementById('userCodeStatus').className = `inline-block px-3 py-1 rounded-xl text-[10px] font-bold ${data.user.has_activation ? 'bg-[#FBBF24]/10 text-amber-600 border border-[#FBBF24]/20' : 'bg-red-50 text-red-500 border border-red-200'}`;
                 
                 const deviceCountText = `${data.devices.length} / 2`;
                 const deviceCountEl = document.getElementById('userDeviceCount');
                 deviceCountEl.innerText = deviceCountText;
                 if (data.devices.length >= 2) {
-                    deviceCountEl.className = 'text-lg font-bold text-red-500';
+                    deviceCountEl.className = 'text-sm font-bold text-red-500';
                 } else {
-                    deviceCountEl.className = 'text-lg font-bold text-zinc-900';
+                    deviceCountEl.className = 'text-sm font-bold text-zinc-900';
                 }
 
                 document.getElementById('targetPhone').value = data.user.phone;
@@ -561,17 +645,16 @@
                 expiryDiv.classList.remove('hidden');
 
                 if (!data.user.activation_set_at) {
-                    expiryDiv.className = 'rounded-2xl p-4 border border-zinc-200 bg-zinc-50 space-y-2';
-                    expiryStatus.innerHTML = '<span class="text-zinc-500">Belum pernah diaktifkan</span>';
+                    expiryDiv.className = 'p-4 bg-zinc-50 rounded-2xl border border-zinc-200/50 flex justify-between items-center gap-3';
+                    expiryStatus.innerHTML = '<span class="text-zinc-400">Belum pernah diaktifkan</span>';
                 } else if (data.user.is_expired) {
-                    expiryDiv.className = 'rounded-2xl p-4 border border-red-200 bg-red-50 space-y-2';
-                    expiryStatus.innerHTML = '<span class="text-red-600">⚠ KADALUARSA</span> <span class="text-[10px] text-red-400 block">sejak ' + new Date(data.user.expires_at).toLocaleDateString() + '</span>';
+                    expiryDiv.className = 'p-4 bg-red-50 rounded-2xl border border-red-200 flex justify-between items-center gap-3';
+                    expiryStatus.innerHTML = '<span class="text-red-500 font-bold">⚠ Kadaluarsa</span> <span class="text-[10px] text-red-400 block">sejak ' + new Date(data.user.expires_at).toLocaleDateString() + '</span>';
                 } else {
                     const exp = new Date(data.user.expires_at);
                     const daysLeft = Math.ceil((exp - new Date()) / (1000 * 60 * 60 * 24));
-                    const color = daysLeft <= 7 ? 'amber' : 'emerald';
-                    expiryDiv.className = `rounded-2xl p-4 border border-${color}-200 bg-${color}-50 space-y-2`;
-                    expiryStatus.innerHTML = `<span class="text-${color}-700">${daysLeft} hari tersisa</span> <span class="text-[10px] text-${color}-500 block">aktif hingga ${exp.toLocaleDateString()}</span>`;
+                    expiryDiv.className = 'p-4 bg-amber-50 rounded-2xl border border-[#FBBF24]/20 flex justify-between items-center gap-3';
+                    expiryStatus.innerHTML = `<span class="text-amber-800 font-bold">${daysLeft} hari tersisa</span> <span class="text-[10px] text-[#FBBF24] block font-semibold">s/d ${exp.toLocaleDateString()}</span>`;
                 }
             } catch (err) {
                 showAlert('Gagal', err.message, 'error');
@@ -612,13 +695,13 @@
             section.classList.remove('hidden');
             devices.forEach(d => {
                 tbody.innerHTML += `
-                    <tr class="border-b border-zinc-50 text-xs">
-                        <td class="py-4 font-mono text-zinc-400">${d.device_id.slice(0, 10)}...</td>
-                        <td class="py-4 font-bold">${d.device_name || '-'}</td>
+                    <tr class="border-b border-zinc-100 hover:bg-zinc-50/50 text-zinc-650">
+                        <td class="py-4 pl-2 font-mono text-[11px] text-zinc-400">${d.device_id.slice(0, 10)}...</td>
+                        <td class="py-4 font-bold text-zinc-800">${d.device_name || '-'}</td>
                         <td class="py-4 text-zinc-500">${new Date(d.activated_at).toLocaleString()}</td>
                         <td class="py-4 text-zinc-500">${new Date(d.last_used_at).toLocaleString()}</td>
-                        <td class="py-4 text-right">
-                            <button onclick="deleteDevice(${d.id})" class="bg-red-50 text-red-500 hover:bg-red-100 px-3 py-1.5 rounded-lg font-bold text-[10px] transition-all cursor-pointer">HAPUS</button>
+                        <td class="py-4 text-right pr-2">
+                            <button onclick="deleteDevice(${d.id})" class="bg-red-50 hover:bg-red-100 text-red-500 px-3 py-1.5 rounded-xl font-bold text-[10px] border border-red-200 transition-all cursor-pointer">HAPUS</button>
                         </td>
                     </tr>
                 `;
@@ -655,50 +738,52 @@
                 const data = await api('/admin/users');
                 tbody.innerHTML = '';
                 if (data.users.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" class="py-10 text-center text-zinc-400 text-sm">Belum ada user yang terdaftar.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="5" class="py-8 text-center text-zinc-400">Belum ada user yang terdaftar.</td></tr>';
                     return;
                 }
                 data.users.forEach(u => {
                     let statusBadge;
                     if (!u.activation_set_at) {
-                        statusBadge = '<span class="px-2 py-0.5 bg-zinc-100 text-zinc-500 rounded-full text-[10px] font-bold">BELUM SET</span>';
+                        statusBadge = '<span class="px-2.5 py-0.5 bg-zinc-50 text-zinc-400 rounded-full text-[10px] font-bold border border-zinc-200">BELUM SET</span>';
                     } else if (u.is_expired) {
-                        statusBadge = '<span class="px-2 py-0.5 bg-red-100 text-red-600 rounded-full text-[10px] font-bold">KADALUARSA</span>';
+                        statusBadge = '<span class="px-2.5 py-0.5 bg-red-50 text-red-500 rounded-full text-[10px] font-bold border border-red-200">KADALUARSA</span>';
                     } else {
                         const exp = new Date(u.expires_at);
                         const now = new Date();
                         const daysLeft = Math.ceil((exp - now) / (1000 * 60 * 60 * 24));
-                        statusBadge = `<span class="px-2 py-0.5 ${daysLeft <= 7 ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'} rounded-full text-[10px] font-bold">${daysLeft} HARI LAGI</span>`;
+                        statusBadge = `<span class="px-2.5 py-0.5 ${daysLeft <= 7 ? 'bg-amber-50 text-amber-600 border border-amber-200' : 'bg-[#FBBF24]/10 text-amber-800 border border-[#FBBF24]/20'} rounded-full text-[10px] font-bold">${daysLeft} HARI LAGI</span>`;
                     }
 
                     tbody.innerHTML += `
-                        <tr class="border-b border-zinc-50 text-xs hover:bg-zinc-50/50 transition-colors">
-                            <td class="py-4">
-                                <div class="font-bold text-zinc-900">${u.full_name}</div>
+                        <tr class="border-b border-zinc-100 hover:bg-zinc-50/40 text-zinc-600">
+                            <td class="py-4 pl-2">
+                                <div class="font-bold text-zinc-800 text-sm">${u.full_name}</div>
                                 <div class="text-[10px] text-zinc-400 font-mono">ID: ${u.consignor_id}</div>
                             </td>
-                            <td class="py-4 font-medium">
-                                <a href="https://wa.me/${formatWA(u.phone)}" target="_blank" class="text-emerald-600 hover:underline">
+                            <td class="py-4 font-bold text-sm">
+                                <a href="https://wa.me/${formatWA(u.phone)}" target="_blank" class="text-amber-600 hover:underline">
                                     ${u.phone}
                                 </a>
                             </td>
-                            <td class="py-4 font-mono font-bold text-amber-600 text-sm tracking-widest">${u.activation && u.activation.length <= 10 ? u.activation : '<span class="text-[10px] text-zinc-300">TERENKRIPSI LAMA</span>'}</td>
+                            <td class="py-4 font-mono font-black text-amber-600 tracking-widest text-sm">${u.activation && u.activation.length <= 10 ? u.activation : '<span class="text-[10px] text-zinc-400 font-normal">TERENKRIPSI LAMA</span>'}</td>
                             <td class="py-4">
-                                ${statusBadge}
-                                ${u.expires_at ? '<div class="text-[10px] text-zinc-400 mt-1">s/d ' + new Date(u.expires_at).toLocaleDateString() + '</div>' : ''}
+                                <div class="flex flex-col gap-0.5">
+                                    <div>${statusBadge}</div>
+                                    ${u.expires_at ? '<div class="text-[10px] text-zinc-400">s/d ' + new Date(u.expires_at).toLocaleDateString() + '</div>' : ''}
+                                </div>
                             </td>
-                            <td class="py-4 text-right">
-                                <div class="flex gap-2 justify-end">
+                            <td class="py-4 text-right pr-2">
+                                <div class="flex gap-2.5 justify-end">
                                     <button onclick="extendActivation('${u.phone}')" 
-                                        class="bg-[#FFCA40] text-zinc-900 px-3 py-1.5 rounded-lg font-bold text-[10px] hover:shadow-lg transition-all cursor-pointer">
+                                        class="bg-[#FBBF24]/10 hover:bg-[#FBBF24]/20 text-amber-600 px-3 py-2 rounded-xl font-bold text-[10px] border border-[#FBBF24]/15 transition-all cursor-pointer">
                                         + 30 HARI
                                     </button>
                                     <button onclick="openUserModal(${u.consignor_id})" 
-                                        class="bg-zinc-100 text-zinc-600 px-3 py-1.5 rounded-lg font-bold text-[10px] hover:bg-zinc-200 transition-all cursor-pointer">
+                                        class="bg-zinc-50 border border-zinc-200 text-zinc-500 hover:text-zinc-800 px-3 py-2 rounded-xl font-bold text-[10px] transition-all cursor-pointer">
                                         EDIT
                                     </button>
                                     <button onclick="deleteUser(${u.consignor_id})" 
-                                        class="bg-red-50 text-red-500 hover:bg-red-100 px-3 py-1.5 rounded-lg font-bold text-[10px] transition-all cursor-pointer">
+                                        class="bg-red-50 hover:bg-red-100 border border-red-200 text-red-500 px-3 py-2 rounded-xl font-bold text-[10px] transition-all cursor-pointer">
                                         HAPUS
                                     </button>
                                 </div>
@@ -722,26 +807,26 @@
 
                 tbody.innerHTML = '';
                 if (ready.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" class="py-10 text-center text-zinc-400 text-sm">Tidak ada antrean pembayaran lunas.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="5" class="py-8 text-center text-zinc-400">Tidak ada antrean pembayaran lunas.</td></tr>';
                 } else {
                     ready.forEach(p => {
                         tbody.innerHTML += `
-                            <tr class="border-b border-zinc-50 text-xs hover:bg-zinc-50/50 transition-colors">
-                                <td class="py-4 text-zinc-500">${new Date(p.created_at).toLocaleDateString()}</td>
+                            <tr class="border-b border-zinc-100 hover:bg-zinc-50/40 text-zinc-600">
+                                <td class="py-4 pl-2 text-zinc-400">${new Date(p.created_at).toLocaleDateString()}</td>
                                 <td class="py-4">
-                                    <div class="font-bold text-zinc-900">${p.umkm}</div>
+                                    <div class="font-bold text-zinc-800 text-sm">${p.umkm}</div>
                                     <div class="text-[10px] text-zinc-400">${p.full_name}</div>
                                 </td>
-                                <td class="py-4 font-medium">
-                                    <a href="https://wa.me/${formatWA(p.whatsapp)}" target="_blank" class="text-emerald-600 hover:underline">
+                                <td class="py-4 font-bold text-sm">
+                                    <a href="https://wa.me/${formatWA(p.whatsapp)}" target="_blank" class="text-amber-600 hover:underline">
                                         ${p.whatsapp}
                                     </a>
                                 </td>
                                 <td class="py-4">
-                                    <span class="px-2 py-0.5 bg-zinc-100 rounded-full text-[10px] font-bold">PLAN ${p.plan || 1}</span>
+                                    <span class="px-3 py-1 bg-zinc-50 border border-zinc-200 rounded-full text-[10px] font-bold">PLAN ${p.plan || 1}</span>
                                 </td>
-                                <td class="py-4 text-right">
-                                    <button onclick="processPayment('${p.id_payment}')" class="bg-zinc-900 text-white hover:bg-zinc-700 px-4 py-2 rounded-xl font-bold text-[10px] transition-all cursor-pointer">PROSES UMKM</button>
+                                <td class="py-4 text-right pr-2">
+                                    <button onclick="processPayment('${p.id_payment}')" class="bg-gradient-to-r from-[#FBCA24] to-[#FBBF24] text-white px-4 py-2 rounded-2xl font-black text-[10px] transition-all cursor-pointer shadow-sm">PROSES UMKM</button>
                                 </td>
                             </tr>
                         `;
@@ -750,19 +835,21 @@
 
                 pbody.innerHTML = '';
                 if (pending.length === 0) {
-                    pbody.innerHTML = '<tr><td colspan="4" class="py-6 text-center text-zinc-400 text-sm">Tidak ada pembayaran tertunda.</td></tr>';
+                    pbody.innerHTML = '<tr><td colspan="4" class="py-6 text-center text-zinc-400">Tidak ada pembayaran tertunda.</td></tr>';
                 } else {
                     pending.forEach(p => {
                         pbody.innerHTML += `
-                            <tr class="border-b border-zinc-50 text-xs whitespace-nowrap">
-                                <td class="py-4 text-zinc-400">${new Date(p.created_at).toLocaleDateString()}</td>
-                                <td class="py-4 font-medium text-zinc-600">${p.umkm}</td>
-                                <td class="py-4">
-                                    <a href="https://wa.me/${formatWA(p.whatsapp)}" target="_blank" class="text-zinc-500 hover:text-emerald-600 transition-colors">
+                            <tr class="border-b border-zinc-100 text-zinc-550 text-[11px]">
+                                <td class="py-3.5 pl-2 text-zinc-400">${new Date(p.created_at).toLocaleDateString()}</td>
+                                <td class="py-3.5 font-bold text-zinc-700">${p.umkm}</td>
+                                <td class="py-3.5">
+                                    <a href="https://wa.me/${formatWA(p.whatsapp)}" target="_blank" class="text-zinc-500 hover:text-amber-600 transition-colors">
                                         ${p.whatsapp}
                                     </a>
                                 </td>
-                                <td class="py-4 italic text-zinc-400">QRIS PENDING</td>
+                                <td class="py-3.5 italic text-zinc-400 flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> QRIS PENDING
+                                </td>
                             </tr>
                         `;
                     });
@@ -798,8 +885,19 @@
             document.getElementById('secretStatus').classList.remove('hidden');
             showStatus('Secret Key disimpan');
         }
+
+        function saveSecretMobile() {
+            const secret = document.getElementById('adminSecretMobile').value;
+            if (!secret) return showAlert('Peringatan', 'Secret Key tidak boleh kosong.');
+            localStorage.setItem('jitu_admin_secret', secret);
+            showStatus('Secret Key disimpan');
+        }
+
         document.getElementById('adminSecret').value = localStorage.getItem('jitu_admin_secret') || '';
-        if (localStorage.getItem('jitu_admin_secret')) document.getElementById('secretStatus').classList.remove('hidden');
+        document.getElementById('adminSecretMobile').value = localStorage.getItem('jitu_admin_secret') || '';
+        if (localStorage.getItem('jitu_admin_secret')) {
+            document.getElementById('secretStatus').classList.remove('hidden');
+        }
 
         // --- User CRUD Logic ---
         function openUserModal(userId = null) {
@@ -815,20 +913,16 @@
             if (userId) {
                 title.innerText = 'Edit Data User';
                 passLabel.innerText = 'Password Baru (Opsional)';
-                // Fetch user data from table or API
                 const row = document.querySelector(`button[onclick="openUserModal(${userId})"]`).closest('tr');
                 document.getElementById('userFullName').value = row.querySelector('.font-bold').innerText;
                 document.getElementById('userPhone').value = row.querySelector('a').innerText.trim();
                 document.getElementById('userEmail').value = row.cells[2].innerText.trim() === '-' ? '' : row.cells[2].innerText.trim();
-                // Store/Capital can be fetched from API if needed, for now we assume they are simple or fetchable
-                // To be precise, let's just fetch from API to get all hidden fields
+                
                 api(`/admin/user-details`, 'POST', { phone: row.querySelector('a').innerText.trim() })
                     .then(data => {
                         document.getElementById('userFullName').value = data.user.full_name;
                         document.getElementById('userPhone').value = data.user.phone;
                         document.getElementById('userEmail').value = data.user.email || '';
-                        // Note: current index.ejs doesn't show store_name/capital in user list
-                        // If we want full CRUD we should enable these
                     });
             } else {
                 title.innerText = 'Tambah User Baru';

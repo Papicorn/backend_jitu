@@ -8,51 +8,49 @@
 </head>
 <body class="min-h-screen bg-[#F4F7FE] flex items-center justify-center p-4">
 
-    <div class="w-full max-w-sm">
-        <!-- Logo area -->
-        <div class="text-center mb-10">
-            <div class="inline-flex w-16 h-16 bg-[#FFCA40] rounded-3xl items-center justify-center shadow-xl mb-4 transform rotate-6">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                </svg>
+    <div class="w-full max-w-md space-y-8">
+        <!-- Logo & Header -->
+        <div class="text-center">
+            <div class="inline-flex w-16 h-16 bg-gradient-to-r from-[#FBCA24] to-[#FBBF24] text-white rounded-2xl items-center justify-center shadow-lg shadow-[#FBBF24]/20 mb-4 font-black text-2xl">
+                JT
             </div>
-            <h1 class="text-2xl font-bold text-zinc-900">Admin Access</h1>
-            <p class="text-sm text-zinc-500 mt-1">JITU Activation Panel</p>
+            <h1 class="text-2xl font-black text-zinc-900 tracking-tight uppercase">JITU ADMIN ACCESS</h1>
+            <p class="text-xs text-zinc-500 mt-1">Otorisasi Kunci Akses Layanan Operasional UMKM</p>
         </div>
 
-        <!-- Card -->
-        <div class="bg-white rounded-3xl shadow-xl p-8 border border-zinc-100">
+        <!-- Form Card -->
+        <div class="bg-white border border-zinc-200/60 rounded-3xl p-8 shadow-md space-y-6">
             <% if (error) { %>
-            <div class="mb-5 px-4 py-3 bg-red-50 border border-red-200 rounded-2xl text-sm text-red-600 font-medium">
-                ⚠️ <%= error %>
+            <div class="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600 font-semibold flex items-center gap-2">
+                <span>⚠️</span>
+                <span><%= error %></span>
             </div>
             <% } %>
 
             <form method="POST" action="/admin/login" class="space-y-5">
-                <div>
-                    <label class="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Admin Secret Key</label>
+                <div class="space-y-2">
+                    <label class="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider pl-1">ADMIN SECRET KEY</label>
                     <input
                         type="password"
                         name="secret_key"
-                        placeholder="Masukkan Secret Key"
+                        placeholder="Masukkan kunci rahasia admin..."
                         required
                         autofocus
-                        class="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-4 px-5 text-sm outline-none focus:ring-2 focus:ring-[#FFCA40] transition-all"
+                        class="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-3.5 px-5 text-sm text-zinc-800 outline-none focus:border-[#FBBF24] transition-all placeholder:text-zinc-400"
                     />
                 </div>
 
                 <button
                     type="submit"
-                    class="w-full bg-zinc-900 text-white font-bold py-4 rounded-2xl hover:bg-zinc-700 active:scale-[0.98] transition-all shadow-lg cursor-pointer"
+                    class="w-full bg-gradient-to-r from-[#FBCA24] to-[#FBBF24] text-white font-black py-4 rounded-2xl active:scale-[0.98] transition-all cursor-pointer text-xs uppercase tracking-wider shadow-sm"
                 >
-                    Masuk ke Admin Panel
+                    OTORISASI & MASUK
                 </button>
             </form>
         </div>
 
-        <p class="text-center text-xs text-zinc-400 mt-6">
-            Akses terbatas. Hubungi sistem administrator.
+        <p class="text-center text-[10px] text-zinc-400">
+            Akses sistem ini dipantau secara internal. Pelanggaran akan dilaporkan secara otomatis.
         </p>
     </div>
 
